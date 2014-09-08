@@ -865,5 +865,10 @@ Github: https://github.com/Fuco1/smartparens
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
 #+END_SRC
-
+* Work Items
+*** TODO text-increase and text-decrease conflict with smartparen key bindings
+*** TODO goto-linum remap keybinding not working
+*** TODO flyspell missing
+*** TODO configure cider and lein
+*** TODO configure helm and projectile key bindings
 
