@@ -5,7 +5,7 @@
 # with this software. 
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 
-# base-files version 4.1-1
+# base-files version 4.2-3
 
 # ~/.bash_profile: executed by bash(1) for login shells.
 
@@ -42,8 +42,4 @@ fi
 # if [ -d "${HOME}/info" ]; then
 #   INFOPATH="${HOME}/info:${INFOPATH}"
 # fi
-
-CLOJURE_HOME="/cygdrive/c/work/Clojure"
-PATH="${PATH}:${CLOJURE_HOME}"
-
-
+PATH=$PATH:~/bin
