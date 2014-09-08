@@ -1,0 +1,640 @@
+
+* Currently Installed Packages
+zoom-frm 
+frame-fns 
+frame-cmds 
+smartparens 
+cider 
+clojure-mode 
+pkg-info 
+epl 
+zen-and-art-theme 
+bookmark+ 
+deft 
+anything 
+jump-char 
+ace-jump-buffer 
+dash 
+ace-jump-mode 
+noctilux-theme 
+sublime-themes 
+buffer-move 
+moe-theme 
+color-theme-solarized 
+auto-complete 
+popup 
+color-theme 
+rainbow-delimiters 
+starter-kit-eshell 
+starter-kit-bindings 
+starter-kit-lisp 
+elisp-slime-nav 
+starter-kit 
+paredit 
+idle-highlight-mode 
+find-file-in-project 
+smex 
+ido-ubiquitous 
+magit 
+git-rebase-mode 
+git-commit-mode
+
+* Configuration
+*** About this file 
+*** Emacs Initialization
+***** Code
+******* init.el
+#+NAME: init.el
+#+BEGIN_SRC emacs-lisp :tangle init.el
+(package-initialize t)
+(require 'org')
+(require 'ob-tangle')
+(setq my-emacs-directory (file-name-directory (file-truename load-file-name)))
+(setq org-confirm-babel-evaluate nil)
+(org-babel-load-file (expand-file-name "my-emacs.org" my-emacs-directory))
+
+#+END_SRC
+***** Personal Information
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Shyam Kovuri"
+        user-mail-address "surya46584@gmail.com")
+#+END_SRC
+***** Load Path
+#+BEGIN_SRC emacs-lisp
+(let ((default-directory "~/.emacs.d/elisp/"))
+  (unless (file-exists-p default-directory)
+    (make-directory default-directory))
+  (add-to-list 'load-path default-directory))
+#+END_SRC
+Here we create the directory =~/.emacs.d/elisp= if it does not exist,
+add it to the =load-path=.
+Doing that any =.el= or =.elc= files in this directory can be required
+from *emacs*.
+
+The use-package declaration macro allows you to isolate package
+configuration in your ".emacs" in a way that is performance-oriented
+and,well, just tidy. 
+#+BEGIN_SRC emacs-lisp
+(require 'use-package)
+#+END_SRC
+Github: https://github.com/jwiegley/use-package
+
+***** Package Archives
+#+BEGIN_SRC emacs-lisp
+(setq package-archives nil)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(when (not package-archive-contents)
+    (package-refresh-contents))
+#+END_SRC
+Use =M-x package-refresh-contents= to reload the list of packages
+after adding these for the first time.
+*** Configuration
+***** User Settings
+#+BEGIN_SRC emacs-lisp
+(when (file-readable-p "~/.user.el") (load "~/.user.el"))
+#+END_SRC
+***** Encoding
+#+BEGIN_SRC emacs-lisp
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+#+END_SRC
+
+Kind of a sweeping blow to make sure UTF-8 is used everywhere.
+***** General Settings
+******* Backups
+This is one of the things people usually want to change right away. By default, Emacs saves backup files in the current directory. These are the files ending in =~= that are cluttering up your directory lists. The following code stashes them all in =~/.emacs.d/backups=, where I can find them with =C-x C-f= (=find-file=) if I really need to.
+
+#+begin_src emacs-lisp
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+end_src
+
+Disk space is cheap. Save lots.
+
+#+begin_src emacs-lisp
+(setq delete-old-versions -1)
+(setq version-control t)
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list" t)))
+#+end_src
+******* History
+#+begin_src emacs-lisp
+(setq savehist-file "~/.emacs.d/savehist")
+(savehist-mode 1)
+(setq savehist-save-minibuffer-history 1)
+(setq savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
+#+end_src
+******* Other Settings
+#+BEGIN_SRC emacs-lisp
+(setq
+ inhibit-startup-message t
+ require-final-newline t                ;auto add newline at the end of file
+ column-number-mode t                   ;show the column number
+ default-major-mode 'text-mode          ;use text mode per default
+ mouse-yank-at-point t                  ;middle click with the mouse yanks at point
+ history-length 250                     ;default is 30
+ locale-coding-system 'utf-8            ;utf-8 is default
+ tab-always-indent 'complete            ;try to complete before identing
+ confirm-nonexistent-file-or-buffer nil ;don't ask to create a buffer
+ vc-follow-symlinks t                   ;follow symlinks automatically
+ recentf-max-saved-items 5000           ;same up to 5000 recent files
+ eval-expression-print-length nil       ;do not truncate printed expressions
+ eval-expression-print-level nil        ;print nested expressions
+ send-mail-function 'sendmail-send-it
+ kill-ring-max 5000                     ;truncate kill ring after 5000 entries
+ mark-ring-max 5000                     ;truncate mark ring after 5000 entries
+ mouse-autoselect-window -.1            ;window focus follows the mouse pointer
+ mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
+ indicate-buffer-boundaries 'left       ;fringe markers
+ split-height-threshold 110             ;more readily split horziontally
+ enable-recursive-minibuffers t
+ custom-unlispify-menu-entries nil      ;M-x customize should not cripple menu entries
+ custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
+ show-paren-delay 0
+ )
+
+(put 'narrow-to-region 'disabled nil)   ;narrow to region should be enabled by default
+#+END_SRC
+******* Default Settings
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ tab-width 4
+ indent-tabs-mode nil                   ;use spaces instead of tabs
+ c-basic-offset 4                       ;"tab" with in c-related modes
+ c-hungry-delete-key t                  ;delete more than one space
+ )
+#+END_SRC
+
+Some variables like =tab-width= cannot be set globally:
+#+BEGIN_QUOTE
+tab-width is a variable defined in `C source code'.
+...
+Automatically becomes buffer-local when set.
+#+END_QUOTE
+Whenever they are set the value becomes buffer-local.
+To be able to set such a variable globally we have to use =setq-default= which modifies the default value of the variable.
+******* Gloobal Modes
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode 1)  ;auto revert buffers when changed on disk
+(show-paren-mode t)          ;visualize()
+(iswitchb-mode t)            ;use advanced tab switching
+(blink-cursor-mode -1)       ;no cursor blinking
+(tool-bar-mode -1)           ;disable the awful toolbar
+(menu-bar-mode -1)           ;no menu, you can toggle it with C-c m
+(scroll-bar-mode -1)         ;disable the sroll bar
+#+END_SRC
+******* Prompt Behavior
+#+BEGIN_SRC emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(setq kill-buffer-query-functions
+  (remq 'process-kill-buffer-query-function
+         kill-buffer-query-functions))
+#+END_SRC
+
+All "yes" or "no" questions are aliased to "y" or "n". We don't really
+want to type a full word to answer a question from Emacs, 
+yet Emacs imposes that silly behavior on us. No!
+Also Emacs should be able to kill processes without asking which is
+achieved in the second expression. 
+
+***** Themes,Faces,Frame
+#+BEGIN_SRC emacs-lisp :tangle no
+(set-face-attribute 'default nil :family "Bitstream Vera Sans Mono" :height 89)
+#+END_SRC
+
+I put that line into =~/.user.el= .
+To avoid getting this line into the config I use =:tangle no= as an option in the org-mode source block header.
+
+*** Key Bindings
+***** Key Definition Table
+*** Custom Functions
+***** my-indent-whole-buffer
+
+#+BEGIN_SRC emacs-lisp
+(defun my-indent-whole-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
+#+END_SRC
+
+Indent the whole buffer with one command. Bound to =C-h TAB=.
+
+***** my-isearch-goto-match-beginning
+
+#+BEGIN_SRC emacs-lisp
+(defun my-isearch-goto-match-beginning ()
+  (when (and isearch-forward (not isearch-mode-end-hook-quit)) (goto-char isearch-other-end)))
+(add-hook 'isearch-mode-end-hook 'my-isearch-goto-match-beginning)
+#+END_SRC
+
+Make =isearch-forward= put the cursor at the start of the search, not the end, so that isearch can be used for navigation. See also http://www.emacswiki.org/emacs/IsearchOtherEnd.
+
+***** my-show-file-name
+
+#+BEGIN_SRC emacs-lisp
+(defun my-show-file-name ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (message (buffer-file-name))
+  (kill-new (file-truename buffer-file-name)))
+#+END_SRC
+
+Display and copy the full path of the file associated with the current buffer to the kill ring.
+
+***** my-show-help
+
+#+BEGIN_SRC emacs-lisp
+(quelpa '(pos-tip
+          :repo "syohex/pos-tip"
+          :fetcher github
+          :files ("pos-tip.el")))
+(require 'pos-tip)
+(defun my-show-help ()
+  "Show docs for symbol at point or at beginning of list if not on a symbol.
+Pass symbol-name to the function DOC-FUNCTION."
+  (interactive)
+  (let* ((symbol (save-excursion
+                   (or (symbol-at-point)
+                       (progn (backward-up-list)
+                              (forward-char)
+                              (symbol-at-point)))))
+         (doc-string (if (fboundp symbol)
+                         (documentation symbol t)
+                       (documentation-property
+                        symbol 'variable-documentation t))))
+    (if doc-string
+        (pos-tip-show doc-string 'popup-tip-face (point) nil -1 60)
+      (message "No documentation for %s" symbol))))
+(define-key lisp-mode-shared-map (kbd "C-c C-d")
+  (lambda ()
+    (interactive)
+    (my-show-help)))
+#+END_SRC
+
+I wanted to be able to get a documentation popup without having to trigger auto-complete. It's mostly stolen from [[http://jaderholm.com/][Scott Jaderholm]] (the code is on [[http://www.emacswiki.org/emacs/AutoComplete][Emacswiki]]), but has been made more general to also work with other completion functions.
+
+***** my-switch-to-minibuffer-window
+
+Sometimes the minibuffer loses focus and I almost can get back to it. This function does it quickly.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-switch-to-minibuffer-window ()
+  "Switch to minibuffer window (if active)."
+  (interactive)
+  (when (active-minibuffer-window)
+    (select-window (active-minibuffer-window))))
+#+END_SRC
+
+***** my-toggle-window-split
+
+#+BEGIN_SRC emacs-lisp
+(defun my-toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+#+END_SRC
+
+This function allows to get two vertically splitted windows into a horizontal split and back.
+***** my-url-insert-file-contents
+
+#+BEGIN_SRC emacs-lisp
+(defun my-url-insert-file-contents (url)
+  "Prompt for URL and insert file contents at point."
+  (interactive "sURL: ")
+  (url-insert-file-contents url))
+#+END_SRC
+***** nxml-functions
+#+BEGIN_SRC emacs-lisp
+
+(defun nxml-pretty-print-buffer ()
+  "pretty print the XML in a buffer."
+  (interactive)
+  (nxml-pretty-print-region (point-min) (point-max)))
+
+(defun nxml-kill-tag-contents ()
+  "Copy the contents between two tags"
+;  (interactive "*p\ncCopy tag contents: ") ; this expects arguments input
+  (interactive)
+  (nxml-backward-up-element)
+  (kill-region
+    (progn (search-forward ">")
+      (point))
+    (progn (nxml-backward-up-element)
+      (nxml-forward-element)
+      (search-backward "</")
+      (point))))
+
+(defun nxml-copy-tag-contents ()
+  "Copy the contents between two tags"
+;  (interactive "*p\ncCopy tag contents: ") ; this expects arguments input
+  (interactive)
+  (nxml-backward-up-element)
+  (copy-region-as-kill
+   (progn (search-forward ">") (point))
+   (progn (nxml-backward-up-element)
+     (nxml-forward-element)
+     (search-backward "</")
+     (point))))
+#+begin_src emacs-lisp
+(use-package magit
+  :init (setq magit-diff-options '("-b")) ; ignore whitespace
+  :bind ("C-x v d" . magit-status))
+#+end_src
+***** move quickly functions
+#+BEGIN_SRC emacs-lisp 
+;;;;;;; Move more quickly
+(global-set-key (kbd "C-S-n")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (next-line 5))))
+
+(global-set-key (kbd "C-S-p")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (previous-line 5))))
+
+(global-set-key (kbd "C-S-f")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (forward-char 5))))
+
+(global-set-key (kbd "C-S-b")
+                (lambda ()
+                  (interactive)
+                  (ignore-errors (backward-char 5))))
+
+#+END_SRC
+***** open lines functions
+#+BEGIN_SRC emacs-lisp
+;;; Open Lines
+
+(defun open-line-below ()
+  (interactive)
+  (end-of-line)
+  (newline)
+  (indent-for-tab-command))
+
+(defun open-line-above ()
+  (interactive)
+  (beginning-of-line)
+  (newline)
+  (forward-line -1)
+  (indent-for-tab-command))
+
+(global-set-key (kbd "<C-return>") 'open-line-below)
+(global-set-key (kbd "<C-S-return>") 'open-line-above)
+
+;;;; Rebind goto-line line
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input"
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (goto-line (read-number "Goto line: ")))
+    (linum-mode -1)))
+
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+;;;;Join Line
+(global-set-key (kbd "M-j")
+                (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+#+END_SRC
+*** Advices
+
+#+BEGIN_SRC emacs-lisp
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively with no active region, copy a single
+line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (message "Copied line")
+      (list (line-beginning-position)
+               (line-beginning-position 2)))))
+
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single
+line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (list (line-beginning-position)
+        (line-beginning-position 2)))))
+#+END_SRC
+*** Modes
+***** buffer-move
+***** cider
+***** deft
+(use-package deft
+:init
+(progn
+(setq deft-extension "org"
+ deft-directory "~/notes"
+ deft-text-mode 'org-mode
+ deft-use-filename-as-title t
+ deft-auto-save-interval 20))
+:bind ((global-set-key (kbd "<f9>") 'deft)))
+***** eww
+***** expand-region
+***** flycheck-mode
+***** grizzl
+***** helm
+Helm makes it easy to complete various things. I find it to be easier
+to configure than ido in order to get completion in as many places as
+possible, although I prefer ido's way of switching buffers.
+
+#+begin_src emacs-lisp
+    (use-package helm
+      :init
+      (progn 
+        (require 'helm-config) 
+        (setq helm-candidate-number-limit 10)
+        ;; From https://gist.github.com/antifuchs/9238468
+        (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+              helm-input-idle-delay 0.01  ; this actually updates things
+                                            ; reeeelatively quickly.
+              helm-quick-update t
+              helm-M-x-requires-pattern nil
+              helm-ff-skip-boring-files t)
+        (helm-mode))
+      :config
+      (progn
+        ;; I don't like the way switch-to-buffer uses history, since
+        ;; that confuses me when it comes to buffers I've already
+        ;; killed. Let's use ido instead.
+        (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido)))
+      :bind (("C-c h" . helm-mini)))
+    (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
+#+end_src
+***** helm-google
+***** helm-swoop
+***** ido-mode
+***** flx-ido
+***** json-mode
+***** magit
+#+begin_src emacs-lisp
+(use-package magit
+  :init (setq magit-diff-options '("-b")) ; ignore whitespace
+  :bind ("C-x v d" . magit-status))
+#+end_src
+***** move-text
+***** org-mode
+******* General Settings
+******* Taking Notes
+******* Agenda
+******* Templates
+******* Speed Commands
+******* Managing Tasks
+******* Clocking
+******* org-journal
+******* org-mobile-sync-mode
+******* LaTeX
+******* Publishing
+***** multiple-cursors
+***** projectile
+***** rainbow-mode
+***** recentf
+***** saveplace
+***** savehist
+***** smartparens
+#+BEGIN_QUOTE
+Smartparens is minor mode for Emacs that deals with parens pairs and tries to be smart about it. It started as a unification effort to combine functionality of several existing packages in a single, compatible and extensible way to deal with parentheses, delimiters, tags and the like.
+#+END_QUOTE
+
+Github: https://github.com/Fuco1/smartparens
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :init 
+    (progn
+      (require 'smartparens-config)
+      (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+      (add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;
+      ;; keybinding management
+  
+      (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+      (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+  
+      (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
+      (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+      (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+      (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
+  
+      (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+      (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
+      (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
+      (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
+  
+      (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+      (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+  
+      (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+      (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+  
+      (define-key sp-keymap (kbd "M-<delete>") 'sp-unwrap-sexp)
+      (define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+  
+      (define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
+      (define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
+      (define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+      (define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+  
+      (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+      (define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+      (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+      (define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
+  
+      (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+      (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+      (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
+  
+      (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+      (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+  
+      (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+      (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+      (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+      (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+      (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+      (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+      (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+      (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+      (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+  
+  ;;;;;;;;;;;;;;;;;;
+      ;; pair management
+  
+      (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  
+  ;;; markdown-mode
+      (sp-with-modes '(markdown-mode gfm-mode rst-mode)
+        (sp-local-pair "*" "*" :bind "C-*")
+        (sp-local-tag "2" "**" "**")
+        (sp-local-tag "s" "```scheme" "```")
+        (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
+  
+  ;;; tex-mode latex-mode
+      (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+        (sp-local-tag "i" "1d5f8e69396c521f645375107197ea4dfbc7b792quot;<" "1d5f8e69396c521f645375107197ea4dfbc7b792quot;>"))
+  
+  ;;; html-mode
+      (sp-with-modes '(html-mode sgml-mode)
+        (sp-local-pair "<" ">"))
+  
+  ;;; lisp modes
+      (sp-with-modes sp--lisp-modes
+        (sp-local-pair "(" nil :bind "C-("))))
+#+end_src
+
+***** smart-mode-line
+***** zoom-frm
+
+***** ace-jump-buffer
+***** ace-jump-mode
+***** sublime-themes
+***** buffer-move
+***** moe-theme
+***** auto-complete
+***** color-theme
+***** clojure-mode 
+***** ipretty
+***** key-chord
+#+begin_src emacs-lisp
+  (use-package key-chord
+    :init
+    (progn 
+      (key-chord-mode 1)
+      (key-chord-define-global "cg"     'undo)
+      ;;(key-chord-define-global "yp"     'other-window)
+      (setq key-chord-two-keys-delay 0.03)))
+#+end_src
+***** guide-key
+***** pkg-info
+***** jump-char
