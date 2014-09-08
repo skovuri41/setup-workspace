@@ -1,4 +1,4 @@
 setup-workspace
 ===============
 
-setup-workspace repository
+setup-workspace
