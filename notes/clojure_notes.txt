@@ -1,0 +1,256 @@
+
+* 
+* cider
+M-x cider-jack-in: Launch an nREPL server and a REPL client. Prompts for a project root if given a prefix argument.
+M-x cider: Connect to an already-running nREPL server.
+While you're in clojure-mode, cider-jack-in is bound for convenience
+to C-c M-j and cider is bound to C-c M-c.
+
+* cider-mode
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| Keyboard shortcut | Description                                                                                                 |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-x C-e C-c C-e   | Evaluate the form preceding point and display the result in the echo area.                                  |
+|                   | If invoked with a prefix argument, insert the result into the current buffer.                               |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-w           | Evaluate the form preceding point and replace it with its result.                                           |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-e           | Evaluate the form preceding point and output it result to the REPL buffer.                                  |
+|                   | If invoked with a prefix argument, takes you to the REPL buffer after being invoked.                        |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-p           | Load the form preceding point in the REPL buffer.                                                           |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-p           | Evaluate the form preceding point and pretty-print the result in a popup buffer.                            |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-f           | Evaluate the top level form under point and pretty-print the result in a popup buffer.                      |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-M-x C-c C-c     | Evaluate the top level form under point and display the result in the echo area.                            |
+|                   | If invoked with a prefix argument, insert the result into the current buffer.                               |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-r           | Evaluate the region and display the result in the echo area.                                                |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-b           | Interrupt any pending evaluations.                                                                          |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-m           | Invoke macroexpand-1 on the form at point and display the result in a macroexpansion buffer.                |
+|                   | If invoked with a prefix argument, macroexpand is used instead of macroexpand-1.                            |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-m           | Invoke clojure.walk/macroexpand-all on the form at point and display the result in a macroexpansion buffer. |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-n           | Eval the ns form.                                                                                           |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-n           | Switch the namespace of the REPL buffer to the namespace of the current buffer.                             |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-z           | Switch to the relevant REPL buffer. Use a prefix argument to change the namespace of the REPL buffer        |
+|                   | to match the currently visited source file.                                                                 |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-u C-u C-c C-z   | Switch to the REPL buffer based on a user prompt for a directory.                                           |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-d           | Display default REPL connection details, including project directory name, buffer namespace, host and port. |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-r           | Rotate and display the default nREPL connection.                                                            |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c M-o           | Clear the entire REPL buffer, leaving only a prompt. Useful if you're running the REPL buffer               |
+|                   | in a side by side buffer.                                                                                   |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-k           | Load the current buffer.                                                                                    |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-l           | Load a file.                                                                                                |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-d           | Display doc string for the symbol at point. If invoked with a prefix argument,                              |
+|                   | or no symbol is found at point, prompt for a symbol.                                                        |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-s           | Display the source for the symbol at point. If invoked with a prefix argument,                              |
+|                   | or no symbol is found at point, prompt for a symbol.                                                        |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-j           | Display JavaDoc (in your default browser) for the symbol at point. If invoked with a prefix argument,       |
+|                   | or no symbol is found at point, prompt for a symbol.                                                        |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| C-c C-i           | Inspect expression. Will act on expression at point if present.                                             |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| M-.               | Jump to the definition of a symbol. If invoked with a prefix argument, or no symbol is found at point,      |
+|                   | prompt for a symbol.                                                                                        |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| M-,               | Return to your pre-jump location.                                                                           |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+| M-TAB             | Complete the symbol at point. (For auto-complete integration, see ac-nrepl)                                 |
+|-------------------+-------------------------------------------------------------------------------------------------------------|
+
+* cider-repl-mode
+
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| Keyboard shortcut | Description                                                                                                    |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| RET               | Evaluate the current input in Clojure if it is complete.                                                       |
+|                   | If incomplete, open a new line and indent.                                                                     |
+|                   | If invoked with a prefix argument is given then the input is evaluated without checking for completeness.      |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-RET             | Close any unmatched parenthesis and then evaluate the current input in Clojure.                                |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-j               | Open a new line and indent.                                                                                    |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c M-o           | Clear the entire REPL buffer, leaving only a prompt.                                                           |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-o           | Remove the output of the previous evaluation from the REPL buffer.                                             |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-u           | Kill all text from the prompt to the current point.                                                            |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-b C-c C-c   | Interrupt any pending evaluations.                                                                             |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-up C-down       | Goto to previous/next input in history.                                                                        |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| M-p M-n           | Search the previous/next item in history using the current input as search pattern.                            |
+|                   | If M-p/M-n is typed two times in a row, the second invocation uses the same search pattern                     |
+|                   | (even if the current input has changed).                                                                       |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| M-s M-r           | Search forward/reverse through command history with regex.                                                     |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-n C-c C-p   | Move between the current and previous prompts in the REPL buffer.                                              |
+|                   | Pressing RET on a line with old input copies that line to the newest prompt.                                   |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| TAB               | Complete symbol at point.                                                                                      |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-d           | Display doc string for the symbol at point. If invoked with a prefix argument, or no symbol is found at point, |
+|                   | prompt for a symbol                                                                                            |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-j           | Display JavaDoc (in your default browser) for the symbol at point.                                             |
+|                   | If invoked with a prefix argument, or no symbol is found at point, prompt for a symbol.                        |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-z           | Switch to the previous Clojure buffer. This complements C-c C-z used in cider-mode.                            |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c M-f           | Select a function from the current namespace using ido and insert into the REPL buffer.                        |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+| C-c C-i           | Inspect expression. Will act on expression at point if present.                                                |
+|-------------------+----------------------------------------------------------------------------------------------------------------|
+
+* smart-parens navigation functions
+|-------+-----------------------------------------------|
+| C-M-f | sp-forward-sexp               (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-b | sp-backward-sexp              (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-d | sp-down-sexp                  (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-a | sp-backward-down-sexp         (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-e | sp-up-sexp                    (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-u | sp-backward-up-sexp           (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-n | sp-next-sexp                  (&optional arg) |
+|-------+-----------------------------------------------|
+| C-M-p | sp-previous-sexp              (&optional arg) |
+|-------+-----------------------------------------------|
+| C-S-d | sp-beginning-of-sexp          (&optional arg) |
+|-------+-----------------------------------------------|
+| C-S-a | sp-end-of-sexp                (&optional arg) |
+|-------+-----------------------------------------------|
+| none  | sp-beginning-of-next-sexp     (&optional arg) |
+|-------+-----------------------------------------------|
+| none  | sp-beginning-of-previous-sexp (&optional arg) |
+|-------+-----------------------------------------------|
+| none  | sp-end-of-next-sexp           (&optional arg) |
+|-------+-----------------------------------------------|
+| none  | sp-end-of-previous-sexp       (&optional arg) |
+|-------+-----------------------------------------------|
+
+* smart-parens-manipulation functions
+|-----------------------------------+-----------------+-------|
+| sp-kill-sexp                      | C-M-k           |       |
+|-----------------------------------+-----------------+-------|
+| sp-backward-kill-sexp             | C--             | C-M-k |
+|-----------------------------------+-----------------+-------|
+| sp-copy-sexp                      | C-M-w           |       |
+|-----------------------------------+-----------------+-------|
+| sp-backward-copy-sexp             | C--             | C-M-w |
+|-----------------------------------+-----------------+-------|
+| sp-unwrap-sexp                    | M-<delete>      |       |
+|-----------------------------------+-----------------+-------|
+| sp-backward-unwrap-sexp           | M-<backspace>   |       |
+|-----------------------------------+-----------------+-------|
+| sp-transpose-sexp                 |                 |       |
+|-----------------------------------+-----------------+-------|
+| sp-splice-sexp                    | M-D             |       |
+|-----------------------------------+-----------------+-------|
+| sp-splice-sexp-killing-forward    | C-M-<delete>    |       |
+|-----------------------------------+-----------------+-------|
+| sp-splice-sexp-killing-backward   | C-M-<backspace> |       |
+|-----------------------------------+-----------------+-------|
+| sp-splice-sexp-killing-around     | C-S-<backspace> |       |
+|-----------------------------------+-----------------+-------|
+| sp-convolute-sexp                 | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-absorb-sexp                    | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-emit-sexp                      | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-extract-before-sexp            | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-extract-after-sexp             | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-split-sexp                     |                 |       |
+|-----------------------------------+-----------------+-------|
+| sp-join-sexp                      | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-rewrap-sexp                    | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-swap-enclosing-sexp            | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-forward-slurp-sexp             | C-<right>       |       |
+|-----------------------------------+-----------------+-------|
+| sp-forward-barf-sexp              | C-<left>        |       |
+|-----------------------------------+-----------------+-------|
+| sp-backward-slurp-sexp            | C-M-<left>      |       |
+|-----------------------------------+-----------------+-------|
+| sp-backward-barf-sexp             | C-M-<right>     |       |
+|-----------------------------------+-----------------+-------|
+| sp-add-to-next-sexp               | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-add-to-previous-sexp           | none            |       |
+|-----------------------------------+-----------------+-------|
+| sp-select-next-thing              | C-M-]           |       |
+|-----------------------------------+-----------------+-------|
+| sp-select-previous-thing          | C-[             |       |
+|-----------------------------------+-----------------+-------|
+| sp-select-next-thing-exchange     | C-]             |       |
+|-----------------------------------+-----------------+-------|
+| sp-select-previous-thing-exchange | C--             | C-]   |
+|-----------------------------------+-----------------+-------|
+
+-- sp-kill-sexp - Kill the next balanced expression. If point is inside one and there's no following expression, kill the enclosing expression instead.
+-- sp-backward-kill-sexp - Kill the previous balanced expression.
+-- sp-copy-sexp - Copy the next balanced expression in the kill ring without actually killing it. Prefix arguments work like for sp-kill-sexp.
+-- sp-backward-copy-sexp - Copy the previous balanced expression.
+-- sp-unwrap-sexp - Remove the wrapping pair from the following expression. Following expression is one returned by sp-forward-sexp.
+-- sp-backward-unwrap-sexp - Remove the wrapping pair from the previous expression. Previous expression is one returned by sp-backward-sexp.
+-- sp-transpose-sexp - Transpose the adjacent balanced expressions.
+-- sp-splice-sexp - Remove the wrapping pair from this expression. With arg, do this on Nth enclosing expression as if first navigated with sp-up-sexp.
+-- sp-splice-sexp-killing-forward - Remove the wrapping pair from this expression and kill everything from the end of expression before (point) to end of this expression.
+-- sp-splice-sexp-killing-backward - Remove the wrapping pair from this expression and kill everything from the 
+   beginning of this expression to beginning of expression after (point).
+-- sp-splice-sexp-killing-around - Remove the wrapping pair from this expression and kill everything inside save for ARG next expressions.
+-- sp-convolute-sexp - Move the expressions before point in the current list before the enclosing list.
+-- sp-absorb-sexp - Absorb the preceding expression. This is like backward slurp but also moves the expressions before point with the opening delimiter.
+-- sp-emit-sexp - Move all the expressions preceding point except the first one in the list out of the list. This is (not strictly) inverse operation to absorb.
+-- sp-extract-before-sexp - Move the expression following point before the enclosing list. The point moves with the expression.
+-- sp-extract-after-sexp - Move the expression following point after the enclosing list. The point moves with the expression.
+-- sp-split-sexp - Split the current list using the enclosing delimiters.
+-- sp-join-sexp - Join the expressions before and after point into one.
+-- sp-rewrap-sexp - Rewrap the current enclosing list with a new pair.
+-- sp-swap-enclosing-sexp - Swap the enclosing delimiters between this and parent lists.
+-- sp-forward-slurp-sexp - Extend the current list by one balanced expression or symbol by moving the closing delimiter.
+-- sp-forward-barf-sexp - Contract the current list by one balanced expression or symbol by moving the closing delimiter.
+-- sp-backward-slurp-sexp - Extend the current list by one balanced expression or symbol by moving the opening delimiter.
+-- sp-backward-barf-sexp - Contract the current list by one balanced expression or symbol by moving the opening delimiter.
+-- sp-add-to-next-sexp - Add the expression preceding point to the list following point.
+-- sp-add-to-previous-sexp - Add the expression following point to the list preceding point.
+-- sp-select-next-thing - Select next balanced expression as returned by sp-forward-sexp. Examples of usage: 
+   Can be cleverly used with wrapping features, for example if you want
+   wrap next expression in additional pair of parens. 
+   It can also be used to select expressions followed by M-w to copy to ring but not kill.
+-- sp-select-previous-thing - Select previous balanced expression as returned by sp-backward-sexp.
+-- sp-select-next-thing-exchange - Same as sp-select-next-thing but execute exchange-point-and-mark afterwards.
+-- sp-select-previous-thing-exchange - Same as sp-select-previous-thing but execute exchange-point-and-mark afterwards.
+
+* 
+* 
+* 
