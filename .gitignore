@@ -34,3 +34,14 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+*.emacs-places
+.dbus/session-bus/e2096be0ec3d7fbbc35bee4a5390a399-0
+.cache/dconf/user
+.ido.last
+.bash_history
+.emacs.d/elpa/*
+.emacs.d/backups/*
+.recentf
+.emacs.d/auto-save-list/*
+.emacs.d/savehist
