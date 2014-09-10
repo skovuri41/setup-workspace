@@ -18,7 +18,7 @@
         user-mail-address "surya46584@gmail.com")
 #+END_SRC
 ***** Always maximize Emacs
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp tangle=no
 (modify-all-frames-parameters '((fullscreen . maximized)))
 #+END_SRC
 
@@ -42,6 +42,8 @@ from *emacs*.
 (setq package-archives nil)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
 
 (when (not package-archive-contents)
     (package-refresh-contents))
@@ -65,7 +67,6 @@ If REPOSITORY is specified, use that."
   ace-jump-buffer
   jump-char
   deft
-  cider
   clojure-mode
   smartparens
   zoom-frm
@@ -79,7 +80,8 @@ If REPOSITORY is specified, use that."
   key-chord
   grizzl
   json-mode
-  expand-region)
+  expand-region
+  cider)
     
   "A list of packages to ensure
  are installed at launch.")
@@ -443,6 +445,10 @@ line instead."
    :ensure clojure-mode
    :init
    (progn
+     ;; pin CIDER to always use MELPA Stable
+     ;; needs emacs 24.4
+     ;;(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+ 
      ;;Enable eldoc in Clojure buffers:
      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
      
