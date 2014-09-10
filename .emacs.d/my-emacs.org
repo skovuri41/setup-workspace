@@ -18,7 +18,7 @@
         user-mail-address "surya46584@gmail.com")
 #+END_SRC
 ***** Always maximize Emacs
-#+BEGIN_SRC emacs-lisp tangle=no
+#+BEGIN_SRC emacs-lisp 
 (modify-all-frames-parameters '((fullscreen . maximized)))
 #+END_SRC
 
@@ -42,7 +42,7 @@ from *emacs*.
 (setq package-archives nil)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
+(add-to-list 'package-archives 
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
 
 (when (not package-archive-contents)
@@ -447,7 +447,7 @@ line instead."
    (progn
      ;; pin CIDER to always use MELPA Stable
      ;; needs emacs 24.4
-     ;;(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+     (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
  
      ;;Enable eldoc in Clojure buffers:
      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
