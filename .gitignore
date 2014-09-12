@@ -45,3 +45,4 @@ Icon
 .recentf
 .emacs.d/auto-save-list/*
 .emacs.d/savehist
+*.org~
