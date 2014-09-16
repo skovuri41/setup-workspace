@@ -81,6 +81,12 @@ If REPOSITORY is specified, use that."
   grizzl
   json-mode
   expand-region
+  auto-complete
+  smex
+  flyspell
+  plantuml-mode
+  org-journal
+  ido-vertical-mode 
   cider)
     
   "A list of packages to ensure
@@ -401,11 +407,30 @@ This function allows to get two vertically splitted windows into a horizontal sp
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 (define-key global-map [remap goto-line] 'goto-line-with-feedback)
-;;;;Join Line
-(global-set-key (kbd "M-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
+;;;;Join Lines
+(defun join-lines ()
+   "If at the end of the line, will join the following line to the
+   end of this one...unless it is blank, in which case, it will
+   keep joining lines until the next line with text is
+   connected."
+   (interactive)
+   ;; Move to the the beginning of the white space before attempting
+   ;; this process. This allows us to join lines even if we are in the
+   ;; middle of some empty lines.
+   (re-search-backward "[^[:space:]\\r\\n]")
+   (forward-char)
+   ;; Just in case we have some trailing whitespace we can't see, let's
+   ;; just get rid of it. Won't do anything if in the middle of a line,
+   ;; or if there is not trailing whitespace.
+   (delete-trailing-whitespace (point) (point-at-eol))
+   ;; While we are at the end of the line, join a line, remove the
+   ;; whitespace, and keep on going until we're through...
+   (while (eq (point-at-eol) (point))
+     (delete-char 1)
+     (delete-trailing-whitespace (point) (point-at-eol))))
+
+ (global-set-key (kbd "M-j") 'join-lines)
+
 ;;;; copy-line with variable arugments
 (defun copy-line (&optional arg)
   "Copy lines (as many as prefix argument) in the kill ring"
@@ -439,6 +464,33 @@ line instead."
 #+END_SRC
 *** Modes
 ***** buffer-move
+***** flyspell
+spell checking with [[http://www.emacswiki.org/emacs/FlySpell][FlySpell]], which uses =ispell=.
+To build a dictionary hash (seems important now), do this:
+
+#+BEGIN_SRC sh :tangle no
+  touch ~/.dictionary.txt
+  buildhash ~/.dictionary.txt /usr/local/lib/english.aff ~/.dictionary.txt.hash
+#+END_SRC
+
+ Then, we can use it like:
+
+#+BEGIN_SRC elisp
+  (setq ispell-personal-dictionary
+      (concat (getenv "HOME") "/.dictionary.txt"))
+
+  (dolist (hook '(text-mode-hook org-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1))))
+#+END_SRC
+
+If I find any =text-mode= derived mode that I don't want to
+spell-check, then I need to use the following:
+
+#+BEGIN_SRC elisp :tangle no
+  (dolist (hook '(change-log-mode-hook log-edit-mode-hook org-agenda-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode -1))))
+#+END_SRC
+
 ***** cider
  #+BEGIN_SRC emacs-lisp
  (use-package cider
@@ -616,8 +668,10 @@ Use =C-j= if you want to create a file with what you have entered (and not the m
       ido-default-buffer-method 'selected-window
       ido-max-prospects 32
       ido-use-filename-at-point 'guess
+      ido-vertical-define-keys 'C-n-C-p-up-and-down
       )
 (ido-mode 1)
+(ido-vertical-mode 1)
 
 #+END_SRC
 
@@ -659,7 +713,6 @@ Github: https://github.com/joshwnj/json-mode
 (add-to-list 'auto-mode-alist '("\\.txt$" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
-(add-hook 'org-mode-hook 'flyspell-mode)
 (setq org-directory "~/notes/")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (setq org-agenda-include-all-todo t)
@@ -692,12 +745,82 @@ Github: https://github.com/joshwnj/json-mode
 ******* Agenda
 ******* Templates
 ******* Speed Commands
+If point is at the beginning of a headline or code block in
+org-mode, single keys do fun things. See =org-speed-command-help=
+for details (or hit the ? key at a headline).
+
+#+BEGIN_SRC elisp
+  (setq org-use-speed-commands t)
+#+END_SRC
+
 ******* Managing Tasks
 ******* Clocking
 ******* org-journal
 ******* org-mobile-sync-mode
+
+Set the name of the file where new notes will be stored
+
+#+BEGIN_SRC elisp
+  (setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
+#+END_SRC
+
+Set to <your Dropbox root directory>/MobileOrg.
+
+#+BEGIN_SRC elisp
+  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+#+END_SRC
+
+To get this going, we just need to: =M-x org-mobile-push=
 ******* LaTeX
 ******* Publishing
+******* Babel
+The trick to literate programming is in the [[http://orgmode.org/worg/org-contrib/babel/intro.html][Babel project]], which
+   allows org-mode to not only interpret source code blocks, but
+   evaluate them and tangle them out to a file.
+
+#+BEGIN_SRC elisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh         . t)
+   (js         . t)
+   (emacs-lisp . t)
+   (perl       . t)
+   (scala      . t)
+   (clojure    . t)
+   (python     . t)
+   (dot        . t)
+   (css        . t)
+   (plantuml   . t)))
+#+END_SRC
+
+******* Local Key Bindings
+#+BEGIN_SRC elisp
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key "\M-\C-n" 'outline-next-visible-heading)
+            (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
+            (local-set-key "\M-\C-u" 'outline-up-heading)
+            ;; table
+            (local-set-key "\M-\C-w" 'org-table-copy-region)
+            (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
+            (local-set-key "\M-\C-l" 'org-table-sort-lines)
+            ;; display images
+            (local-set-key "\M-I" 'org-toggle-iimage-in-org)))
+#+END_SRC
+
+   A couple of short-cut keys to make it easier to edit text.
+
+#+BEGIN_SRC elisp
+  (defun org-text-bold () "Wraps the region with asterisks."
+    (interactive)
+    (surround-text "*"))
+  (defun org-text-italics () "Wraps the region with slashes."
+    (interactive)
+    (surround-text "/"))
+  (defun org-text-code () "Wraps the region with equal signs."
+    (interactive)
+    (surround-text "="))
+#+END_SRC
 ***** multiple-cursors
 ***** projectile
 #+BEGIN_SRC emacs-lisp
@@ -708,7 +831,7 @@ Github: https://github.com/joshwnj/json-mode
 #+END_SRC
 ***** rainbow-mode
 #+BEGIN_SRC emacs-lisp
-(use-package rainbow-delimiters-mode)
+(use-package rainbow-delimiters)
 (dolist (hook '(css-mode-hook
                 html-mode-hook
                 js-mode-hook
@@ -729,6 +852,8 @@ You can customize the number of recent files displayed, the location of the menu
 #+BEGIN_SRC emacs-lisp
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key (kbd "C-x C-r") 'recentf-open-files)
 #+END_SRC
 ***** saveplace
 #+BEGIN_QUOTE
@@ -837,6 +962,16 @@ Github: https://github.com/Fuco1/smartparens
 #+end_src
 ***** guide-key
 ***** pkg-info
+***** smex
+#+BEGIN_SRC elisp
+  (require 'smex)
+  (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
+  (global-set-key (kbd "M-x") 'smex)
+  ;;(global-set-key (kbd "M-z") 'smex)  ;; Zap to char isn't so helpful
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+  ;; This is our old M-x.
+  ;;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+END_SRC
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
 ;; Use regex searches by default.
@@ -877,4 +1012,5 @@ Github: https://github.com/Fuco1/smartparens
 *** TODO flyspell missing
 *** TODO configure cider and lein
 *** TODO configure helm and projectile key bindings
+*** TODO cider newer version not working, missing package queue
 
