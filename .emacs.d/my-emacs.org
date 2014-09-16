@@ -800,13 +800,13 @@ for details (or hit the ? key at a headline).
 
 Set the name of the file where new notes will be stored
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
 #+END_SRC
 
 Set to <your Dropbox root directory>/MobileOrg.
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 #+END_SRC
 
@@ -848,7 +848,7 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
             (local-set-key "\M-I" 'org-toggle-iimage-in-org)))
 #+END_SRC
 
-   A couple of short-cut keys to make it easier to edit text.
+A couple of short-cut keys to make it easier to edit text.
 
 #+BEGIN_SRC emacs-lisp
   (defun org-text-bold () "Wraps the region with asterisks."
