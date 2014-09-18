@@ -112,7 +112,6 @@ single space, newlines, or punctuation characters.
 3. M-s w C-r <RET> words <RET>
 
 *** ;;;;; Symbol Search
-
 *** ;;;;; Regular Expression Search
 1. C-M-s Begin incremental regexp search
 2. C-M-r Begin reverse incremental regexp search
@@ -311,7 +310,7 @@ Each buffer has its own mark ring. All editing commands use the current buffer's
      - S-left -> M--
   2.(setq org-return-follows-link t) follow link with Ret.
   3. 
-
+     
 * TODO Calculator
  - calc
 
@@ -443,3 +442,46 @@ w32-browser yasnippet zen-and-art-theme zoom-frm frame-cmds frame-fn
 #  LocalWords:  FlyMake magit lein namespace clojure nrepl technomancy el Clojure Dired paredit ido FlySpell
 #  LocalWords:  yasnippet  cua windmove emacs eshell dirname filename
 #  LocalWords:  timestamp decrypt Wdired dired goto regex
+* Key Bindings reference 
+Refer script in steckemacs which will generate the table for all
+available key-bindings, until then manually update the following table
+for reference.
+  |--------------------+--------------------------------------------------------------+----------------|
+  | Key Binding        | Description                                                  | Category       |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-q            | Change read only mode                                        | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x (              | Start a macro                                                | Keyboard Macro |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x )              | End a macro                                                  | Keyboard Macro |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x e              | Execute macro again                                          | Keyboard Macro               |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | M-{number} C-x e   | Do that last macro (number times)                            | Keyboard Macro               |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x q              | Insert a query into keyboard macro                           | Keyboard Macro               |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-r            | Open Recent Files                                            | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-f            | find a file, create a new buffer                             | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-v            | visit a file for editing, discard current buffer contents    | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-s            | save current buffer to file                                  | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-w            | write the current buffer into a file and prompt a  file name | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x C-v            | also means refresh the current buffer                        | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x 4 f            | find file other window                                       | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x 4 b            | select a buffer in other window                              | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | M-C-v              | scroll other window                                          | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  | C-x b BUFFER <RET> | select or create a buffer name BUFFER.                       | General        |
+  |--------------------+--------------------------------------------------------------+----------------|
+  |                    |                                                              |                |
+ 
+ 
+* 

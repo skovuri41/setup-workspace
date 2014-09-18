@@ -1,5 +1,4 @@
 
-* 
 * cider
 M-x cider-jack-in: Launch an nREPL server and a REPL client. Prompts for a project root if given a prefix argument.
 M-x cider: Connect to an already-running nREPL server.
@@ -251,6 +250,4 @@ to C-c M-j and cider is bound to C-c M-c.
 -- sp-select-next-thing-exchange - Same as sp-select-next-thing but execute exchange-point-and-mark afterwards.
 -- sp-select-previous-thing-exchange - Same as sp-select-previous-thing but execute exchange-point-and-mark afterwards.
 
-* 
-* 
-* 
+

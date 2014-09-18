@@ -46,3 +46,7 @@ Icon
 .emacs.d/auto-save-list/*
 .emacs.d/savehist
 *.org~
+.dbus/session-bus/43023d88c54857910a8c6fb651f71d29-0
+.dbus/session-bus/4616896a11f2605b8241024c51edf4a9-0
+.emacs.d/ido.last
+.smex-items
