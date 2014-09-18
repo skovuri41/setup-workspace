@@ -1,0 +1,13 @@
+* Tasks
+*** TODO 
+  
+  [[file:~/.emacs.d/my-emacs.org::*Templates][Templates]]
+*** TODO 
+  
+  [[file:~/.emacs.d/my-emacs.org::*Templates][Templates]]
+*** TODO 
+  
+  [[file:~/.emacs.d/my-emacs.org::*cider%20newer%20version%20not%20working,%20missing%20package%20queue][cider newer version not working, missing package queue]]
+*** TODO 
+  
+  [[http://orgmode.org/manual/Template-expansion.html#Template-expansion][Org Mode Capture Template Expansion]]
