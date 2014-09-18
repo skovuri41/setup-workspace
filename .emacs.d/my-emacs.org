@@ -463,34 +463,16 @@ line instead."
         (line-beginning-position 2)))))
 #+END_SRC
 *** Modes
+***** ace-jump-buffer
+***** ace-jump-mode
+#+BEGIN_SRC emacs-lisp
+(use-package ace-jump-mode
+  :commands ace-jump-mode
+  :bind ("C-c b SPC" . ace-jump-mode))
+#+END_SRC
+***** auto-complete
 ***** buffer-move
-***** flyspell
-spell checking with [[http://www.emacswiki.org/emacs/FlySpell][FlySpell]], which uses =ispell=.
-To build a dictionary hash (seems important now), do this:
-
-#+BEGIN_SRC sh :tangle no
-  touch ~/.dictionary.txt
-  buildhash ~/.dictionary.txt /usr/local/lib/english.aff ~/.dictionary.txt.hash
-#+END_SRC
-
- Then, we can use it like:
-
-#+BEGIN_SRC elisp
-  (setq ispell-personal-dictionary
-      (concat (getenv "HOME") "/.dictionary.txt"))
-
-  (dolist (hook '(text-mode-hook org-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode 1))))
-#+END_SRC
-
-If I find any =text-mode= derived mode that I don't want to
-spell-check, then I need to use the following:
-
-#+BEGIN_SRC elisp :tangle no
-  (dolist (hook '(change-log-mode-hook log-edit-mode-hook org-agenda-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode -1))))
-#+END_SRC
-
+***** buffer-move
 ***** cider
  #+BEGIN_SRC emacs-lisp
  (use-package cider
@@ -577,6 +559,18 @@ spell-check, then I need to use the following:
      ;;Note that the history is written to the file when you kill the REPL buffer (which includes invoking cider-quit) or you quit Emacs.
      )) 
  #+END_SRC
+***** clojure-mode 
+#+BEGIN_SRC emacs-lisp
+(use-package clojure-mode
+   :commands subword-mode
+   :init
+   (progn
+     ;;(require 'subword-mode)
+	   (add-hook 'clojure-mode-hook 'subword-mode)
+     (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+     (add-hook 'clojure-mode-hook 'smartparens-strict-mode)))
+#+END_SRC
+***** color-theme
 ***** deft
 #+BEGIN_SRC emacs-lisp 
 (use-package deft
@@ -591,7 +585,43 @@ spell-check, then I need to use the following:
  (bind-key [f9] 'deft)))
 #+END_SRC
 ***** eww
+***** flx-ido
+flx-ido quite recently which does indeed improve the flex matching.
+#+BEGIN_SRC emacs-lisp 
+(use-package flx-ido
+ :init
+ (progn
+  (flx-ido-mode 1)
+  (setq ido-use-faces nil)))
+#+END_SRC
 ***** flycheck-mode
+***** flyspell
+spell checking with [[http://www.emacswiki.org/emacs/FlySpell][FlySpell]], which uses =ispell=.
+To build a dictionary hash (seems important now), do this:
+
+#+BEGIN_SRC sh :tangle no
+  touch ~/.dictionary.txt
+  buildhash ~/.dictionary.txt /usr/local/lib/english.aff ~/.dictionary.txt.hash
+#+END_SRC
+
+ Then, we can use it like:
+
+#+BEGIN_SRC elisp
+  (setq ispell-personal-dictionary
+      (concat (getenv "HOME") "/.dictionary.txt"))
+
+  (dolist (hook '(text-mode-hook org-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1))))
+#+END_SRC
+
+If I find any =text-mode= derived mode that I don't want to
+spell-check, then I need to use the following:
+
+#+BEGIN_SRC elisp :tangle no
+  (dolist (hook '(change-log-mode-hook log-edit-mode-hook org-agenda-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode -1))))
+#+END_SRC
+
 ***** grizzl
 #+BEGIN_QUOTE
 Grizzl is a small utility library to be used in other Elisp code
@@ -611,7 +641,7 @@ Currently it is used by [[https://github.com/bbatsov/projectile][Projectile]] in
 #+END_SRC
 
 I would like to see more than just the default results of 10.
-
+***** guide-key
 ***** helm
 
 #+BEGIN_QUOTE
@@ -675,14 +705,12 @@ Use =C-j= if you want to create a file with what you have entered (and not the m
 
 #+END_SRC
 
-***** flx-ido
-flx-ido quite recently which does indeed improve the flex matching.
-#+BEGIN_SRC emacs-lisp 
-(use-package flx-ido
- :init
- (progn
-  (flx-ido-mode 1)
-  (setq ido-use-faces nil)))
+***** ipretty
+#+BEGIN_SRC emacs-lisp
+(use-package ipretty 
+:init
+(progn
+ (ipretty-mode t)))
 #+END_SRC
 ***** json-mode
 #+BEGIN_QUOTE
@@ -697,13 +725,25 @@ Github: https://github.com/joshwnj/json-mode
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 #+END_SRC
 
+***** key-chord
+#+begin_src emacs-lisp
+  (use-package key-chord
+    :init
+    (progn 
+      (key-chord-mode 1)
+      (key-chord-define-global "cg"     'undo)
+      ;;(key-chord-define-global "yp"     'other-window)
+      (setq key-chord-two-keys-delay 0.03)))
+#+end_src
 ***** magit
 #+begin_src emacs-lisp
 (use-package magit
   :init (setq magit-diff-options '("-b")) ; ignore whitespace
   :bind ("C-x v d" . magit-status))
 #+end_src
+***** moe-theme
 ***** move-text
+***** multiple-cursors
 ***** org-mode
 ******* General Settings
 #+BEGIN_SRC emacs-lisp
@@ -749,7 +789,7 @@ If point is at the beginning of a headline or code block in
 org-mode, single keys do fun things. See =org-speed-command-help=
 for details (or hit the ? key at a headline).
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (setq org-use-speed-commands t)
 #+END_SRC
 
@@ -760,13 +800,13 @@ for details (or hit the ? key at a headline).
 
 Set the name of the file where new notes will be stored
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
 #+END_SRC
 
 Set to <your Dropbox root directory>/MobileOrg.
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 #+END_SRC
 
@@ -778,7 +818,7 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
    allows org-mode to not only interpret source code blocks, but
    evaluate them and tangle them out to a file.
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sh         . t)
@@ -794,7 +834,7 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
 #+END_SRC
 
 ******* Local Key Bindings
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook
           (lambda ()
             (local-set-key "\M-\C-n" 'outline-next-visible-heading)
@@ -808,9 +848,9 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
             (local-set-key "\M-I" 'org-toggle-iimage-in-org)))
 #+END_SRC
 
-   A couple of short-cut keys to make it easier to edit text.
+A couple of short-cut keys to make it easier to edit text.
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (defun org-text-bold () "Wraps the region with asterisks."
     (interactive)
     (surround-text "*"))
@@ -821,7 +861,7 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
     (interactive)
     (surround-text "="))
 #+END_SRC
-***** multiple-cursors
+***** pkg-info
 ***** projectile
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
@@ -829,6 +869,7 @@ The trick to literate programming is in the [[http://orgmode.org/worg/org-contri
 (progn 
  (setq projectile-completion-system 'grizzl)))
 #+END_SRC
+
 ***** rainbow-mode
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters)
@@ -855,6 +896,7 @@ You can customize the number of recent files displayed, the location of the menu
 (setq recentf-max-menu-items 25)
 (global-set-key (kbd "C-x C-r") 'recentf-open-files)
 #+END_SRC
+***** savehist
 ***** saveplace
 #+BEGIN_QUOTE
 Automatically save place in each file. This means when you visit a file, point goes to the last place
@@ -865,7 +907,7 @@ where it was when you previously visited the same file.
 (require 'saveplace)
 (setq-default save-place t)
 #+END_SRC
-***** savehist
+***** smart-mode-line
 ***** smartparens
 #+BEGIN_QUOTE
 Smartparens is minor mode for Emacs that deals with parens pairs and tries to be smart about it. 
@@ -918,50 +960,6 @@ Github: https://github.com/Fuco1/smartparens
 	(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)))
 
 #+END_SRC
-***** smart-mode-line
-***** zoom-frm
-***** ace-jump-buffer
-***** ace-jump-mode
-#+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
-  :commands ace-jump-mode
-  :bind ("C-c b SPC" . ace-jump-mode))
-#+END_SRC
-***** sublime-themes
-***** buffer-move
-***** moe-theme
-***** auto-complete
-***** color-theme
-***** clojure-mode 
-#+BEGIN_SRC emacs-lisp
-(use-package clojure-mode
-   :commands subword-mode
-   :init
-   (progn
-     ;;(require 'subword-mode)
-	   (add-hook 'clojure-mode-hook 'subword-mode)
-     (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-     (add-hook 'clojure-mode-hook 'smartparens-strict-mode)))
-#+END_SRC
-***** ipretty
-#+BEGIN_SRC emacs-lisp
-(use-package ipretty 
-:init
-(progn
- (ipretty-mode t)))
-#+END_SRC
-***** key-chord
-#+begin_src emacs-lisp
-  (use-package key-chord
-    :init
-    (progn 
-      (key-chord-mode 1)
-      (key-chord-define-global "cg"     'undo)
-      ;;(key-chord-define-global "yp"     'other-window)
-      (setq key-chord-two-keys-delay 0.03)))
-#+end_src
-***** guide-key
-***** pkg-info
 ***** smex
 #+BEGIN_SRC elisp
   (require 'smex)
@@ -971,7 +969,9 @@ Github: https://github.com/Fuco1/smartparens
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
   ;; This is our old M-x.
   ;;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-#+END_SRC
+#+END_SRC***** sublime-themes
+***** zoom-frm
+
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
 ;; Use regex searches by default.
