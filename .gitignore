@@ -50,3 +50,4 @@ Icon
 .dbus/session-bus/4616896a11f2605b8241024c51edf4a9-0
 .emacs.d/ido.last
 .smex-items
+*.txt#
