@@ -1006,11 +1006,15 @@ Github: https://github.com/Fuco1/smartparens
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
 #+END_SRC
-* Work Items
+* Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
 *** TODO goto-linum remap keybinding not working
 *** TODO flyspell missing
 *** TODO configure cider and lein
 *** TODO configure helm and projectile key bindings
 *** TODO cider newer version not working, missing package queue
+*** TODO work on copy rectangle emacs-lisp script
+*** TODO ido m-x mode and helm m-x mode , compare and research
+*** TODO checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
+
 
