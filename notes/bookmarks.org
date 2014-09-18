@@ -15,3 +15,23 @@
 :CREATED: [2014-09-18 Thu 00:01]
 :END:
 
+*** [[http://debasishg.blogspot.com/2010/08/random-thoughts-on-clojure-protocols.html][Debashish Clojure Protocol Explaination]]
+:PROPERTIES:
+:CREATED: [2014-09-18 Thu 00:04]
+:END:
+
+*** [[http://vimeo.com/11236603][Clojure Protocol Video on Vimeo by Stuart Halloway]]
+:PROPERTIES:
+:CREATED: [2014-09-18 Thu 00:05]
+:END:
+
+*** [[http://www.infoq.com/presentations/Clojure-Expression-Problem][Clojure Expression Problem by Chris Houser on Infoq]]
+:PROPERTIES:
+:CREATED: [2014-09-18 Thu 00:07]
+:END:
+
+*** [[http://www.ibm.com/developerworks/library/j-clojure-protocols/][Stuart Sierra Article on Solving Expression Problem in Clojure]]
+:PROPERTIES:
+:CREATED: [2014-09-18 Thu 00:08]
+:END:
+
