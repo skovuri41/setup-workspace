@@ -87,7 +87,13 @@ If REPOSITORY is specified, use that."
   plantuml-mode
   org-journal
   ido-vertical-mode 
-  cider)
+  cider 
+  yasnippet
+  clojure-snippets 
+  auto-complete 
+  ac-cider 
+  clj-refactor 
+  )
     
   "A list of packages to ensure
  are installed at launch.")
@@ -173,9 +179,12 @@ Disk space is cheap. Save lots.
  visible-bell t)
 
 (put 'narrow-to-region 'disabled nil)   ;narrow to region should be enabled by default
+;;Suppress symbolic link warnings
+(setq find-file-visit-truename t)
+
 #+END_SRC
 ******* Default Settings
-#+BEGIN_SRC emacs-lisp
+ #+BEGIN_SRC emacs-lisp
 (setq-default
  tab-width 4
  indent-tabs-mode nil                   ;use spaces instead of tabs
@@ -209,6 +218,7 @@ To be able to set such a variable globally we have to use =setq-default= which m
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
+
 #+END_SRC
 ******* Prompt Behavior
 #+BEGIN_SRC emacs-lisp
@@ -471,6 +481,30 @@ line instead."
   :bind ("C-c b SPC" . ace-jump-mode))
 #+END_SRC
 ***** auto-complete
+#+BEGIN_SRC emacs-lisp
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict"))
+(set-default 'ac-sources
+                 '(ac-source-abbrev
+                   ac-source-dictionary
+                   ac-source-yasnippet
+                   ac-source-words-in-buffer
+                   ac-source-words-in-same-mode-buffers
+                   ac-source-semantic))
+
+ (ac-config-default)
+ (global-auto-complete-mode t)
+#+END_SRC
+
+Note that we specify where a dictionary lives for each specific
+language, and if for some reason, a mode isn't getting the "AC"
+minor mode, you can add to it with this magic:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (dolist (m '(python-mode js2-mode clojure-mode))
+    (add-to-list 'ac-modes m))
+#+END_SRC
+
 ***** buffer-move
 ***** buffer-move
 ***** cider
@@ -559,6 +593,16 @@ line instead."
      ;;Note that the history is written to the file when you kill the REPL buffer (which includes invoking cider-quit) or you quit Emacs.
      )) 
  #+END_SRC
+Auto completion configuration for Cider.
+
+#+BEGIN_SRC emacs-lisp
+ (require 'ac-cider)
+  (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+  (add-hook 'cider-mode-hook 'ac-cider-setup)
+  (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+  (eval-after-load "auto-complete"
+    '(add-to-list 'ac-modes 'cider-mode))
+#+END_SRC
 ***** clojure-mode 
 #+BEGIN_SRC emacs-lisp
 (use-package clojure-mode
@@ -570,6 +614,8 @@ line instead."
      (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
      (add-hook 'clojure-mode-hook 'smartparens-strict-mode)))
 #+END_SRC
+***** clj-refactor
+***** cljdoc
 ***** color-theme
 ***** deft
 #+BEGIN_SRC emacs-lisp 
@@ -878,7 +924,8 @@ A couple of short-cut keys to make it easier to edit text.
                 js-mode-hook
                 emacs-lisp-mode-hook
                 org-mode-hook
-                text-mode-hook
+                text-mode-hook 
+                cider-repl-mode-hook
                 ))
   (add-hook hook 'rainbow-delimiters-mode))
 #+END_SRC
@@ -969,14 +1016,39 @@ Github: https://github.com/Fuco1/smartparens
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
   ;; This is our old M-x.
   ;;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-#+END_SRC***** sublime-themes
+#+END_SRC***** sublime-theme
+***** yasnippet
+******* Installation
+ #+BEGIN_SRC emacs-lisp
+(require 'yasnippet)
+(yas-reload-all)
+(add-to-list 'yas-snippet-dirs (concat user-emacs-directory "snippets") t)
+(dolist (hook '(prog-mode-hook text-mode-hook org-mode-hook clojure-mode-hook))
+    (add-hook hook (lambda () (yas-minor-mode))))
+#+END_SRC 
+******* Org Mode Conflicts
+#+BEGIN_SRC emacs-lisp
+ (defun yas/org-very-safe-expand ()
+            (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+ (add-hook 'org-mode-hook
+                    (lambda ()
+                      (make-variable-buffer-local 'yas/trigger-key)
+                      (setq yas/trigger-key [tab])
+                      (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                      (define-key yas/keymap [tab] 'yas/next-field)))
+#+END_SRC
+******* Merge two hooks for same mode into one
+#+BEGIN_SRC emacs-lisp :tangle no
+(add-hook 'web-mode-hook (lambda ()
+  (yas-activate-extra-mode 'html-mode)
+  (yas-activate-extra-mode 'css-mode) ))
+#+END_SRC
 ***** zoom-frm
-
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
 ;; Use regex searches by default.
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "\C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
@@ -1004,7 +1076,12 @@ Github: https://github.com/Fuco1/smartparens
 ;; Font size
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
-
+;;; remap undo
+;;(global-set-key (kbd "C-/") 'undo)
+(global-set-key (kbd "C-c i") 'indent-region)
+(global-set-key (kbd "C-c l") 'linum-mode)
+(global-set-key (kbd "C-c g") 'goto-line)
+(global-set-key (kbd "C-c b") 'ibuffer)
 #+END_SRC
 * Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
@@ -1015,6 +1092,11 @@ Github: https://github.com/Fuco1/smartparens
 *** TODO cider newer version not working, missing package queue
 *** TODO work on copy rectangle emacs-lisp script
 *** TODO ido m-x mode and helm m-x mode , compare and research
-*** TODO checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
+*** TODO clj-refactor, cljdoc configuration
+*** TODO Color Identifiers Mode
+*** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
+* 
+
+
 
 
