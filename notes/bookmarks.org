@@ -61,3 +61,9 @@ clojure webapps excercises as in video demo by the author.
 :CATEGORY: emacs
 :END:
 emacs org-mode custom bullets unicode
+* [[http://blog.korny.info/2014/03/08/xml-for-fun-and-profit.html#laziness---lose-your-head][Xml manipulation in clojure]] 
+:PROPERTIES:
+:CREATED:  2014-09-22
+:CATEGORY: clojure
+:END:
+Article showing various ways to parse and process xml data.
