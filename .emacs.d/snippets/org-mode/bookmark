@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: bookmark
+# key: bookmark
+# --
+* [[$1][$2]] 
+:PROPERTIES:
+:CREATED: `(format-time-string "%Y-%m-%d")`
+:CATEGORY: $3
+:END:
+$0
+
+
