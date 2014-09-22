@@ -87,12 +87,12 @@ If REPOSITORY is specified, use that."
   plantuml-mode
   org-journal
   ido-vertical-mode 
-  cider 
-  yasnippet
+  yasnippet 
   clojure-snippets 
   auto-complete 
-  ac-cider 
-  clj-refactor 
+  cider 
+  ac-cider
+  org-bullets 
   )
     
   "A list of packages to ensure
@@ -516,7 +516,7 @@ minor mode, you can add to it with this magic:
      ;; pin CIDER to always use MELPA Stable
      ;; needs emacs 24.4
      (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
- 
+     (add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
      ;;Enable eldoc in Clojure buffers:
      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
      
@@ -595,7 +595,7 @@ minor mode, you can add to it with this magic:
  #+END_SRC
 Auto completion configuration for Cider.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
  (require 'ac-cider)
   (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
   (add-hook 'cider-mode-hook 'ac-cider-setup)
@@ -790,6 +790,13 @@ Github: https://github.com/joshwnj/json-mode
 ***** moe-theme
 ***** move-text
 ***** multiple-cursors
+***** org-bullets
+#+BEGIN_SRC emacs-lisp
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters][Customized Bullets]]  
+
 ***** org-mode
 ******* General Settings
 #+BEGIN_SRC emacs-lisp
@@ -830,6 +837,17 @@ Github: https://github.com/joshwnj/json-mode
 ******* Taking Notes
 ******* Agenda
 ******* Templates
+#+BEGIN_SRC emacs-lisp :tangle yes
+ (setq org-capture-templates 
+	'(
+    ;; capture bookmarks   
+	  ("b" "Bookmark" plain (file "~/notes/bookmarks.org" "Bookmarks"))
+	  ;; capture Tasks
+   ("t" "Todo" entry (file+headline "~/notes/gtd.org" "Tasks")
+             "* TODO %?\n  %i\n  %c")
+	))
+
+#+END_SRC
 ******* Speed Commands
 If point is at the beginning of a headline or code block in
 org-mode, single keys do fun things. See =org-speed-command-help=
@@ -1095,7 +1113,8 @@ Github: https://github.com/Fuco1/smartparens
 *** TODO clj-refactor, cljdoc configuration
 *** TODO Color Identifiers Mode
 *** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
-* 
+
+
 
 
 

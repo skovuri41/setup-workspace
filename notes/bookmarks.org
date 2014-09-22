@@ -1,37 +1,63 @@
-* Bookmarks
-
-*** [[http://karl-voit.at/2014/08/10/bookmarks-with-orgmode/[capturing bookmarks in orgmode]]]
+* [[http://karl-voit.at/2014/08/10/bookmarks-with-orgmode/][capturing bookmarks in orgmode]]
 :PROPERTIES:
 :CREATED: [2014-09-17 Wed 23:41]
 :END:
 
-*** [[http://orgmode.org/manual/Template-expansion.html#Template-expansion][Org Mode Template Expansion ]]
+* [[http://orgmode.org/manual/Template-expansion.html#Template-expansion][Org Mode Template Expansion ]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:00]
 :END:
 
-*** [[http://blog.mattgauger.com/blog/2014/09/15/clojure-code-quality-tools/?utm_source%3Ddlvr.it&utm_medium%3Dtwitter&utm_campaign%3DFeed%253A%2BMattGaugerBlog%2B%2528Matt%2BGauger%2527s%2BBlog%2529][Clojure Quality Tools]]
+* [[http://blog.mattgauger.com/blog/2014/09/15/clojure-code-quality-tools/?utm_source%3Ddlvr.it&utm_medium%3Dtwitter&utm_campaign%3DFeed%253A%2BMattGaugerBlog%2B%2528Matt%2BGauger%2527s%2BBlog%2529][Clojure Quality Tools]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:01]
 :END:
 
-*** [[http://debasishg.blogspot.com/2010/08/random-thoughts-on-clojure-protocols.html][Debashish Clojure Protocol Explaination]]
+* [[http://debasishg.blogspot.com/2010/08/random-thoughts-on-clojure-protocols.html][Debashish Clojure Protocol Explaination]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:04]
 :END:
 
-*** [[http://vimeo.com/11236603][Clojure Protocol Video on Vimeo by Stuart Halloway]]
+* [[http://vimeo.com/11236603][Clojure Protocol Video on Vimeo by Stuart Halloway]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:05]
 :END:
 
-*** [[http://www.infoq.com/presentations/Clojure-Expression-Problem][Clojure Expression Problem by Chris Houser on Infoq]]
+* [[http://www.infoq.com/presentations/Clojure-Expression-Problem][Clojure Expression Problem by Chris Houser on Infoq]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:07]
 :END:
 
-*** [[http://www.ibm.com/developerworks/library/j-clojure-protocols/][Stuart Sierra Article on Solving Expression Problem in Clojure]]
+* [[http://www.ibm.com/developerworks/library/j-clojure-protocols/][Stuart Sierra Article on Solving Expression Problem in Clojure]]
 :PROPERTIES:
 :CREATED: [2014-09-18 Thu 00:08]
 :END:
-
+* [[https://www.youtube.com/watch?v=oJTwQvgfgMM][Google Tech Talk on Org-mode by Carsten Dominik]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: org-mode
+:END:
+One hour tech talk @ google by creator of org-mode, detailing at
+highl level on all the available key feature of emacs org-mode
+* [[https://github.com/tlipski/clojure-webapps][clojure-webapps @ github ]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: clojure
+:END:
+clojure webapps excercises as in video demo by the author.
+* [[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][Howard Abrams Emacs Org File]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: emacs
+:END:
+* [[http://www.linuxjournal.com/article/9116?page=0,3][Emacs Org-mode article on Linux journal]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: emacs
+:END:
+* [[http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters][org-bullets customized bullets unicode]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: emacs
+:END:
+emacs org-mode custom bullets unicode
