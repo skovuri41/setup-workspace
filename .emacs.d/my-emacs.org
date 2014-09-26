@@ -98,6 +98,7 @@ If REPOSITORY is specified, use that."
   cider 
   ac-cider
   org-bullets
+  guide-key 
   )
     
   "A list of packages to ensure
@@ -707,6 +708,11 @@ Currently it is used by [[https://github.com/bbatsov/projectile][Projectile]] in
 
 I would like to see more than just the default results of 10.
 ***** guide-key
+#+BEGIN_SRC emacs-lisp
+(require 'guide-key)
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+(guide-key-mode 1)  ; Enable guide-key-mode
+#+END_SRC
 ***** helm
 
 #+BEGIN_QUOTE
