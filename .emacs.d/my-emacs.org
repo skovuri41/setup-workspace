@@ -4,10 +4,25 @@
 ***** Code
 ******* init.el
 #+NAME: init.el
-#+BEGIN_SRC emacs-lisp :tangle init.el
+#+BEGIN_SRC emacs-lisp :tangle no
 (package-initialize t)
 (require 'org)
+(require 'ob)
 (require 'ob-tangle)
+(require 'ob-clojure)
+(setq org-babel-clojure-backend 'cider)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh         . t)
+   (js         . t)
+   (emacs-lisp . t)
+   (perl       . t)
+   (scala      . t)
+   (clojure    . t)
+   (python     . t)
+   (dot        . t)
+   (css        . t)
+   (plantuml   . t)))
 (setq my-emacs-directory (file-name-directory (file-truename load-file-name)))
 (setq org-confirm-babel-evaluate nil)
 (org-babel-load-file (expand-file-name "my-emacs.org" my-emacs-directory))
@@ -24,7 +39,7 @@
         user-mail-address "surya46584@gmail.com")
 #+END_SRC
 ***** Always maximize Emacs
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp :tangle no 
 (modify-all-frames-parameters '((fullscreen . maximized)))
 #+END_SRC
 
@@ -50,6 +65,12 @@ from *emacs*.
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
+
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
 (when (not package-archive-contents)
     (package-refresh-contents))
@@ -99,9 +120,10 @@ If REPOSITORY is specified, use that."
   ac-cider
   org-bullets
   guide-key 
+  smart-mode-line
   )
-    
-  "A list of packages to ensure
+ 
+ "A list of packages to ensure
  are installed at launch.")
 
 (dolist (p my-packages)
@@ -482,9 +504,7 @@ line instead."
 ***** ace-jump-buffer
 ***** ace-jump-mode
 #+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
-  :commands ace-jump-mode
-  :bind ("C-c b SPC" . ace-jump-mode))
+  (require 'ace-jump-mode)
 #+END_SRC
 ***** auto-complete
 #+BEGIN_SRC emacs-lisp
@@ -514,97 +534,95 @@ minor mode, you can add to it with this magic:
 #+END_SRC
 
 ***** buffer-move
-***** buffer-move
 ***** cider
  #+BEGIN_SRC emacs-lisp
- (use-package cider
-   :ensure clojure-mode
-   :init
-   (progn
-     ;; pin CIDER to always use MELPA Stable
-     ;; needs emacs 24.4
-     (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-     (add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
-     ;;Enable eldoc in Clojure buffers:
-     (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-     
-     ;;You can hide the *nrepl-connection* and *nrepl-server* buffers from
-     ;;appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
-     (setq nrepl-hide-special-buffers t)
 
-     ;;When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible.
-     ;;They'll always be visible in list-buffers (C-x C-b).
+ ;; pin CIDER to always use MELPA Stable
+ ;; needs emacs 24.4
+ ;;(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+ ;;(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
+ ;;Enable eldoc in Clojure buffers:
+ (require 'cider)
+ (setq org-babel-clojure-backend 'cider)
+ (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+ 
+ ;;You can hide the *nrepl-connection* and *nrepl-server* buffers from
+ ;;appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
+ (setq nrepl-hide-special-buffers t)
 
-     (setq cider-repl-tab-command 'indent-for-tab-command)
+ ;;When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible.
+ ;;They'll always be visible in list-buffers (C-x C-b).
 
-     ;;Prevent the auto-display of the REPL buffer in a separate window after connection is established:
-     (setq cider-repl-pop-to-buffer-on-connect nil)
+ (setq cider-repl-tab-command 'indent-for-tab-command)
 
-     ;;Stop the error buffer from popping up while working in buffers other than the REPL:
-     ;(setq cider-popup-stacktraces nil)
+ ;;Prevent the auto-display of the REPL buffer in a separate window after connection is established:
+ (setq cider-repl-pop-to-buffer-on-connect nil)
 
-     ;;Enable error buffer popping also in the REPL:
-     ;(setq cider-repl-popup-stacktraces t)
+ ;;Stop the error buffer from popping up while working in buffers other than the REPL:
+ ;(setq cider-popup-stacktraces nil)
 
-     ;;To auto-select the error buffer when it's displayed:
-     (setq cider-auto-select-error-buffer t)
+ ;;Enable error buffer popping also in the REPL:
+ ;(setq cider-repl-popup-stacktraces t)
 
-     ;;The REPL buffer name has the format *cider-repl project-name*.
-     ;;Change the separator from space to something else by overriding nrepl-buffer-name-separator.
-     (setq nrepl-buffer-name-separator "-")
+ ;;To auto-select the error buffer when it's displayed:
+ (setq cider-auto-select-error-buffer t)
 
-     ;;The REPL buffer name can also display the port on which the nREPL
-     ;;server is running. 
-     ;;Buffer name will look like cider-repl project-name:port.
-     (setq nrepl-buffer-name-show-port t)
-     
-     ;;Make C-c C-z switch to the CIDER REPL buffer in the current window:
-     (setq cider-repl-display-in-current-window t)
-     
-     ;;Limit the number of items of each collection the printer will print to 100:
-     (setq cider-repl-print-length 100) ; the default is nil, no limit
-     
-     ;;Prevent C-c C-k from prompting to save the file corresponding to the buffer being loaded, if it's modified:
-     ;(setq cider-prompt-save-file-on-load nil)
-     
-     ;;Change the result prefix for REPL evaluation (by default there's no prefix):
-     ;(set cider-repl-result-prefix ";; => ")
-     
-     ;;And here's the result of that change:
-     ;;user> (+ 1 2)
-     ;; ;; => 3
-     
-     ;;Change the result prefix for interactive evaluation (by default it's =>):
-     ;(set cider-interactive-eval-result-prefix ";; => ")
-     ;;To remove the prefix altogether just set it to an empty string("").
-     
-     ;;Normally code you input in the REPL is font-locked with cider-repl-input-face (after you press RET) and results are font-locked with cider-repl-output-face.
-     ;;If you want them to be font-locked as in clojure-mode use the following:
-     ;(setq cider-repl-use-clojure-font-lock t)
-     
-     ;;You can control the C-c C-z key behavior of switching to the REPL buffer with the cider-switch-to-repl-command variable.
-     ;;While the default command cider-switch-to-relevant-repl-buffer should be an adequate choice for most users,
-     ;;cider-switch-to-current-repl-buffer offers a simpler alternative where CIDER will not attempt to match the
-     ;;correct REPL buffer based on underlying project directories:
-     ;(setq cider-switch-to-repl-command 'cider-switch-to-current-repl-buffer)
-     
-     ;;REPL History
-     ;;To make the REPL history wrap around when its end is reached:
-     (setq cider-repl-wrap-history t)
-     
-     ;;To adjust the maximum number of items kept in the REPL history:
-     (setq cider-repl-history-size 1000) ; the default is 500
-     
-     ;;To store the REPL history in a file:
-     (setq cider-repl-history-file "./cider-repl-history.txt")
-     
-     ;;Note that the history is written to the file when you kill the REPL buffer (which includes invoking cider-quit) or you quit Emacs.
-     )) 
+ ;;The REPL buffer name has the format *cider-repl project-name*.
+ ;;Change the separator from space to something else by overriding nrepl-buffer-name-separator.
+ (setq nrepl-buffer-name-separator "-")
+
+ ;;The REPL buffer name can also display the port on which the nREPL
+ ;;server is running. 
+ ;;Buffer name will look like cider-repl project-name:port.
+ (setq nrepl-buffer-name-show-port t)
+ 
+ ;;Make C-c C-z switch to the CIDER REPL buffer in the current window:
+ (setq cider-repl-display-in-current-window t)
+ 
+ ;;Limit the number of items of each collection the printer will print to 100:
+ (setq cider-repl-print-length 100) ; the default is nil, no limit
+ 
+ ;;Prevent C-c C-k from prompting to save the file corresponding to the buffer being loaded, if it's modified:
+ ;;(setq cider-prompt-save-file-on-load nil)
+ 
+ ;;Change the result prefix for REPL evaluation (by default there's no prefix):
+ ;;(set cider-repl-result-prefix ";; => ")
+ 
+ ;;And here's the result of that change:
+ ;;user> (+ 1 2)
+ ;; ;; => 3
+ 
+ ;;Change the result prefix for interactive evaluation (by default it's =>):
+ ;(set cider-interactive-eval-result-prefix ";; => ")
+ ;;To remove the prefix altogether just set it to an empty string("").
+ 
+ ;;Normally code you input in the REPL is font-locked with cider-repl-input-face (after you press RET) and results are font-locked with cider-repl-output-face.
+ ;;If you want them to be font-locked as in clojure-mode use the following:
+ ;(setq cider-repl-use-clojure-font-lock t)
+ 
+ ;;You can control the C-c C-z key behavior of switching to the REPL buffer with the cider-switch-to-repl-command variable.
+ ;;While the default command cider-switch-to-relevant-repl-buffer should be an adequate choice for most users,
+ ;;cider-switch-to-current-repl-buffer offers a simpler alternative where CIDER will not attempt to match the
+ ;;correct REPL buffer based on underlying project directories:
+ ;(setq cider-switch-to-repl-command 'cider-switch-to-current-repl-buffer)
+ 
+ ;;REPL History
+ ;;To make the REPL history wrap around when its end is reached:
+ (setq cider-repl-wrap-history t)
+ 
+ ;;To adjust the maximum number of items kept in the REPL history:
+ (setq cider-repl-history-size 1000) ; the default is 500
+ 
+ ;;To store the REPL history in a file:
+ (setq cider-repl-history-file "./cider-repl-history.txt")
+ 
+ ;;Note that the history is written to the file when you kill the REPL buffer (which includes invoking cider-quit) or you quit Emacs.
+
  #+END_SRC
 Auto completion configuration for Cider.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
- (require 'ac-cider)
+  (require 'ac-cider)
   (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
   (add-hook 'cider-mode-hook 'ac-cider-setup)
   (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
@@ -625,14 +643,10 @@ may want to put  auto-complete into your completion-at-point-functions:
 #+END_SRC
 ***** clojure-mode 
 #+BEGIN_SRC emacs-lisp
-(use-package clojure-mode
-   :commands subword-mode
-   :init
-   (progn
-     ;;(require 'subword-mode)
-	   (add-hook 'clojure-mode-hook 'subword-mode)
-     (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-     (add-hook 'clojure-mode-hook 'smartparens-strict-mode)))
+;;(require 'subword-mode)
+(add-hook 'clojure-mode-hook 'subword-mode)
+(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 #+END_SRC
 ***** clj-refactor
 ***** cljdoc
@@ -710,8 +724,22 @@ I would like to see more than just the default results of 10.
 ***** guide-key
 #+BEGIN_SRC emacs-lisp
 (require 'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+(setq guide-key/guide-key-sequence
+      '("C-x r" "C-x 4" "C-x"
+        (org-mode "C-c C-x")
+        (outline-minor-mode "C-c @")))
+(defun guide-key/my-hook-function-for-org-mode ()
+  (guide-key/add-local-guide-key-sequence "C-c")
+  (guide-key/add-local-guide-key-sequence "C-c C-x")
+  (guide-key/add-local-highlight-command-regexp "org-"))
+(add-hook 'org-mode-hook 'guide-key/my-hook-function-for-org-mode)
+(setq guide-key/idle-delay 0.1)
 (guide-key-mode 1)  ; Enable guide-key-mode
+#+END_SRC
+***** guide-key-tip
+#+BEGIN_SRC emacs-lisp :tangle no
+(require 'guide-key-tip)
+(setq guide-key-tip/enabled t)
 #+END_SRC
 ***** helm
 
@@ -854,7 +882,12 @@ Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_fri
                    "PENDING"
                    "CANCELLED"
                    "DONE")))
-(setq org-src-fontify-natively t)
+
+;; Let's have pretty source code blocks
+(setq org-edit-src-content-indentation 0
+      org-src-tab-acts-natively t
+      org-src-fontify-natively t
+      org-confirm-babel-evaluate nil)
 ;; Make windmove work in org-mode:
 (add-hook 'org-shiftup-final-hook 'windmove-up)
 (add-hook 'org-shiftleft-final-hook 'windmove-left)
@@ -909,10 +942,12 @@ To get this going, we just need to: =M-x org-mobile-push=
 ******* Publishing
 ******* Babel
 The trick to literate programming is in the [[http://orgmode.org/worg/org-contrib/babel/intro.html][Babel project]], which
-   allows org-mode to not only interpret source code blocks, but
-   evaluate them and tangle them out to a file.
+allows org-mode to not only interpret source code blocks, but
+evaluate them and tangle them out to a file.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
+(require 'ob-clojure)
+(setq org-babel-clojure-backend 'cider)
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sh         . t)
@@ -999,6 +1034,7 @@ You can customize the number of recent files displayed, the location of the menu
 (setq recentf-max-menu-items 25)
 (global-set-key (kbd "C-x C-r") 'recentf-open-files)
 #+END_SRC
+***** rich-minority
 ***** savehist
 ***** saveplace
 #+BEGIN_QUOTE
@@ -1011,6 +1047,19 @@ where it was when you previously visited the same file.
 (setq-default save-place t)
 #+END_SRC
 ***** smart-mode-line
+#+BEGIN_SRC emacs-lisp
+(require 'smart-mode-line)
+(sml/setup)
+(setq sml/no-confirm-load-theme t)
+;;(sml/apply-theme 'dark)
+;;(sml/apply-theme 'light)
+;;(sml/apply-theme 'respectful)
+(sml/apply-theme 'automatic)
+;; Added in the right order, they even work sequentially:
+;;(add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/" ":DB:") t)
+;;(add-to-list 'sml/replacer-regexp-list '("^:DB:Documents" ":DDocs:") t)
+
+#+END_SRC
 ***** smartparens
 #+BEGIN_QUOTE
 Smartparens is minor mode for Emacs that deals with parens pairs and tries to be smart about it. 
@@ -1020,47 +1069,69 @@ compatible and extensible way to deal with parentheses, delimiters, tags and the
 
 Github: https://github.com/Fuco1/smartparens
 #+BEGIN_SRC emacs-lisp
-(use-package smartparens
-:init
-(progn
- (require 'smartparens-config)
- (smartparens-global-mode t)
- ;; highlights matching pairs
- (show-smartparens-global-mode t) 
- (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
- (add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
-	;; "fix"" highlight issue in scratch buffer
-	(custom-set-faces '(sp-pair-overlay-face ((t ()))))
-	(define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
-	(define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
-	(define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
-	(define-key sp-keymap (kbd "C-,") 'sp-backward-down-sexp)
-	(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
-	(define-key sp-keymap (kbd "C-S-e") 'sp-end-of-sexp)
-	(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-	(define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
-	(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-	(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
-	(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
-	(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
-	(define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
-	(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
-	(define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
-	(define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
-	(define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
-	(define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
-	(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
-	(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-forward)
-	(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
-	(define-key sp-keymap (kbd "C-S-f") 'sp-select-next-thing)
-	(define-key sp-keymap (kbd "C-S-b") 'sp-select-previous-thing)
-	(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
-	(define-key sp-keymap (kbd "C-\\") 'sp-select-previous-thing-exchange)
-	(define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
-	(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
-	(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-	(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
-	(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)))
+(require 'smartparens)
+(require 'smartparens-config)
+(smartparens-global-mode t)
+;; highlights matching pairs
+(show-smartparens-global-mode t) 
+(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+(add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
+
+(define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
+(define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
+
+(define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
+(define-key sp-keymap (kbd "C-,") 'sp-backward-down-sexp)
+
+(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+(define-key sp-keymap (kbd "C-S-e") 'sp-end-of-sexp)
+
+(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+(define-key sp-keymap (kbd "C-M-a") 'sp-backward-up-sexp)
+
+(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
+(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
+;;-backward kill
+(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
+;;-backward copy
+
+(define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
+(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+(define-key sp-keymap (kbd "M-t") 'sp-transpose-sexp)
+
+(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-forward)
+(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)
+
+(define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+(define-key sp-keymap (kbd "C-S-f") 'sp-select-next-thing)
+(define-key sp-keymap (kbd "C-S-b") 'sp-select-previous-thing)
+(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+(define-key sp-keymap (kbd "C-\\") 'sp-select-previous-thing-exchange)
+
+(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
+(define-key sp-keymap (kbd "M-S-i") 'sp-join-sexp)
+
+(define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+(define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+(define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+(define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+(define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+(define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+(define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+(define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+(define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+
 
 #+END_SRC
 ***** smex
@@ -1073,6 +1144,7 @@ Github: https://github.com/Fuco1/smartparens
   ;; This is our old M-x.
   ;;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 #+END_SRC***** sublime-theme
+***** undo-tree
 ***** yasnippet
 ******* Installation
  #+BEGIN_SRC emacs-lisp
@@ -1121,9 +1193,17 @@ Github: https://github.com/Fuco1/smartparens
 (windmove-default-keybindings) ;; Shift+direction
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1))) ;; back one
 (global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
+;;; Ace Jump
+(define-prefix-command 'ace-jump-map)
+(global-set-key (kbd "M-j") 'ace-jump-map)
+(define-key ace-jump-map (kbd "SPC") 'ace-jump-mode)
 ;;;;; Jump Char
-(global-set-key [(meta m)] 'jump-char-forward)
-(global-set-key [(shift meta m)] 'jump-char-backward)
+(define-key ace-jump-map (kbd "f" ) 'jump-char-forward)
+(define-key ace-jump-map (kbd "b" ) 'jump-char-backward)
+
+;;(global-set-key [(meta m)] 'jump-char-forward)
+;;(global-set-key [(shift meta m)] 'jump-char-backward)
+
 ;;;;; expand region
 (global-set-key (kbd "C-M-=") 'er/expand-region)
 ;;;; buffer related
@@ -1137,9 +1217,14 @@ Github: https://github.com/Fuco1/smartparens
 (global-set-key (kbd "C-c i") 'indent-region)
 (global-set-key (kbd "C-c l") 'linum-mode)
 (global-set-key (kbd "C-c g") 'goto-line)
-(global-set-key (kbd "C-c b") 'ibuffer)
+(global-set-key (kbd "C-c i") 'ibuffer)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
+
+;; Set keybindings for cycling buffers
+(global-set-key [C-prior] 'previous-buffer)
+(global-set-key [C-next] 'next-buffer)
+
 #+END_SRC
 * Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
@@ -1154,6 +1239,7 @@ Github: https://github.com/Fuco1/smartparens
 *** TODO Color Identifiers Mode
 *** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
 *** TODO emacs etags, usage study
+*** TODO emacs start maximized disabled, revisit
 
 
 
