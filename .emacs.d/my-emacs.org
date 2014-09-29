@@ -1049,8 +1049,8 @@ where it was when you previously visited the same file.
 ***** smart-mode-line
 #+BEGIN_SRC emacs-lisp
 (require 'smart-mode-line)
-(sml/setup)
 (setq sml/no-confirm-load-theme t)
+(sml/setup)
 ;;(sml/apply-theme 'dark)
 ;;(sml/apply-theme 'light)
 ;;(sml/apply-theme 'respectful)
