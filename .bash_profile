@@ -43,3 +43,4 @@ fi
 #   INFOPATH="${HOME}/info:${INFOPATH}"
 # fi
 PATH=$PATH:~/bin
+
