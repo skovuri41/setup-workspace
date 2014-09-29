@@ -430,6 +430,14 @@ starter-kit-eshell starter-kit-lisp elisp-slime-nav starter-kit magit
 git-rebase-mode git-commit-mode ido-ubiquitous smex
 find-file-in-project idle-highlight-mode paredit sublime-themes
 w32-browser yasnippet zen-and-art-theme zoom-frm frame-cmds frame-fn
+* Removing Blank Lines in a Buffer
+ M-x flush-lines RET ^$ RET
+
+And you’re done. So what does that mean? Well, M-x flush-lines will
+flush (remove) lines that match a regular expression, and ^$ contain
+the meta-characters ^ for beginning of string and $ for end of
+string. Ergo, if the two meta-characters are next to eachother, it
+must be a blank line.
 
 * Help
 ;;;; help ;;;;
