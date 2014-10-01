@@ -1,0 +1,12 @@
+
+(org-file-apps
+   (quote
+    ((auto-mode . emacs)
+     ("\\.mm\\'" . default)
+     ("\\.x?html?\\'" . system)
+     ("\\.pdf\\'" . system))))
+
+((auto-mode . emacs)
+     ("\\.mm\\'" . default)
+     ("\\.x?html?\\'" . system)
+     ("\\.pdf\\'" . system))
