@@ -67,3 +67,8 @@ emacs org-mode custom bullets unicode
 :CATEGORY: clojure
 :END:
 Article showing various ways to parse and process xml data.
+* [[http://martintrojer.github.io/][Martin's Programming Blog]] 
+:PROPERTIES:
+:CREATED:  2014-10-02
+:CATEGORY:Clojure
+:END:

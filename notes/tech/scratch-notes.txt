@@ -10,3 +10,11 @@
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . system)
      ("\\.pdf\\'" . system))
+
+(defun set-org-mode-app-defaults ()
+  (setq org-file-apps
+	'(((auto-mode . emacs)
+     ("\\.mm\\'" . default)
+     ("\\.x?html?\\'" . system)
+     ("\\.pdf\\'" . system)))))
+(add-hook 'org-mode-hook 'set-org-mode-app-defaults)

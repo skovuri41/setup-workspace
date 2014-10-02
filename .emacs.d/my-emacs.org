@@ -676,9 +676,10 @@ may want to put  auto-complete into your completion-at-point-functions:
 ***** cljdoc
 ***** color-theme
 ***** desktop
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 ;; use only one desktop
-(setq desktop-path '("~/.emacs.d/"))
+(require 'desktop)
+(setq desktop-path "~/.emacs.d/")
 (setq desktop-dirname "~/.emacs.d/")
 (setq desktop-base-file-name "emacs-desktop")
 
@@ -956,6 +957,14 @@ Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_fri
 (setq org-odd-levels-only t)
 ;; alphabetical lists
 (setq org-alphabetical-lists t)
+
+(setq org-todo-keywords 
+       '((sequence "TODO" 
+                   "IN-PROGRESS"
+                   "PENDING"
+                   "CANCELLED"
+                   "DONE")))
+
 (defun set-org-mode-app-defaults ()
   (setq org-file-apps
 	'(((auto-mode . emacs)
@@ -963,12 +972,6 @@ Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_fri
      ("\\.x?html?\\'" . system)
      ("\\.pdf\\'" . system)))))
 (add-hook 'org-mode-hook 'set-org-mode-app-defaults)
-(setq org-todo-keywords 
-       '((sequence "TODO" 
-                   "IN-PROGRESS"
-                   "PENDING"
-                   "CANCELLED"
-                   "DONE"))))
 
 ;; Let's have pretty source code blocks
 (setq org-edit-src-content-indentation 0
