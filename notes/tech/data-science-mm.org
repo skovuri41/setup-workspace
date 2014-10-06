@@ -1,0 +1,48 @@
+
+* Machine Learning
+
+*** Algorithms
+
+* Data Mining
+
+* Big Data
+
+*** Hadoop Ecosystem
+
+*** Real Time Data
+
+*** Batch Data
+
+*** Lambda Architecture
+
+* Tools
+
+* Data Visualization
+
+* Statistics
+
+* Communication and Presentation
+
+* Computer Science
+
+*** Programming Languages
+
+***** Clojure
+
+***** Java
+
+***** Python
+
+***** R
+
+***** JavaScript
+
+***** D3.js, Angular.js, etc
+
+***** 
+
+* Mathematics
+
+* Curicullam
+* Books
+* 

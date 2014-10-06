@@ -252,89 +252,115 @@ cider is bound to C-c M-c.
 -- sp-select-previous-thing-exchange - Same as sp-select-previous-thing but execute exchange-point-and-mark afterwards.
 
 * smartparents current
-	(custom-set-faces '(sp-pair-overlay-face ((t ()))))
-	(define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
-	(define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
-	(define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
-	(define-key sp-keymap (kbd "C-,") 'sp-backward-down-sexp)
-	(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
-	(define-key sp-keymap (kbd "C-S-e") 'sp-end-of-sexp)
-	(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-	(define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
-	(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-	(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
-	(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
-	(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
-	(define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
-	(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
-	(define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
-	(define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
-	(define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
-	(define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
-	(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
-	(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-forward)
-	(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
-	(define-key sp-keymap (kbd "C-S-f") 'sp-select-next-thing)
-	(define-key sp-keymap (kbd "C-S-b") 'sp-select-previous-thing)
-	(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
-	(define-key sp-keymap (kbd "C-\\") 'sp-select-previous-thing-exchange)
-	(define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
-	(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
-	(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-	(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
-  (define-key sp-keymap (kbd "M-S-i") 'sp-join-sexp)
-  (define-key sp-keymap (kbd "M-t") 'sp-transpose-sexp)
-	(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)))
+
+(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+(add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
+
+(define-key sp-keymap (kbd "C--") 'sp-forward-sexp)
+(define-key sp-keymap (kbd "C-=") 'sp-backward-sexp)
+
+(define-key sp-keymap (kbd "C-.") 'sp-down-sexp)
+(define-key sp-keymap (kbd "C-,") 'sp-backward-down-sexp)
+
+(define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+(define-key sp-keymap (kbd "C-S-e") 'sp-end-of-sexp)
+
+(define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+(define-key sp-keymap (kbd "C-M-a") 'sp-backward-up-sexp)
+
+(define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+(define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
+(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
+;;-backward kill
+(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
+;;-backward copy
+
+(define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
+(define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+(define-key sp-keymap (kbd "M-t") 'sp-transpose-sexp)
+
+(define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+(define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-forward)
+(define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key sp-keymap (kbd "M-r") 'sp-splice-sexp-killing-around)
+
+(define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+(define-key sp-keymap (kbd "C-S-f") 'sp-select-next-thing)
+(define-key sp-keymap (kbd "C-S-b") 'sp-select-previous-thing)
+(define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+(define-key sp-keymap (kbd "C-\\") 'sp-select-previous-thing-exchange)
+
+(define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+(define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
+(define-key sp-keymap (kbd "M-J") 'sp-join-sexp)
+
+(define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+(define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+(define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+(define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+(define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+(define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+(define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+(define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+(define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+
 
   (1 (2 3) 4 5 6 (7 8 9) 10 11 12)
 
 *** Navigation
-1) sp-forward-sexp (&optional arg)                 ;; C-M-f
-2) sp-backward-sexp (&optional arg)                ;; C-M-b
-3) sp-down-sexp (&optional arg)                    ;; C-M-d
-4) sp-backward-down-sexp (&optional arg)           ;; C-M-a
-5) sp-up-sexp (&optional arg)                      ;; C-M-e
-6) sp-backward-up-sexp (&optional arg)             ;; C-M-u
-7) sp-next-sexp (&optional arg)                    ;; C-M-n
-8) sp-previous-sexp (&optional arg)                ;; C-M-p
-9) sp-beginning-of-sexp (&optional arg)            ;; C-S-d
-10) sp-end-of-sexp (&optional arg)                  ;; C-S-a
-11) sp-beginning-of-next-sexp (&optional arg)       ;; none
-12) sp-beginning-of-previous-sexp (&optional arg)   ;; none
-13) sp-end-of-next-sexp (&optional arg)             ;; none
-14) sp-end-of-previous-sexp (&optional arg)         ;; none
+1) sp-forward-sexp (&optional arg)                 
+2) sp-backward-sexp (&optional arg)                
+3) sp-down-sexp (&optional arg)                    
+4) sp-backward-down-sexp (&optional arg)           
+5) sp-up-sexp (&optional arg)                      
+6) sp-backward-up-sexp (&optional arg)             
+7) sp-next-sexp (&optional arg)                    
+8) sp-previous-sexp (&optional arg)                
+9) sp-beginning-of-sexp (&optional arg)            
+10) sp-end-of-sexp (&optional arg)                 
+11) sp-beginning-of-next-sexp (&optional arg)      
+12) sp-beginning-of-previous-sexp (&optional arg)  
+13) sp-end-of-next-sexp (&optional arg)            
+14) sp-end-of-previous-sexp (&optional arg)        
 
 *** Manipulation
-1) sp-kill-sexp (&optional arg)                        ;; C-M-k
-2) sp-backward-kill-sexp (&optional arg)               ;; C-- C-M-k
-3) sp-copy-sexp (&optional arg)                        ;; C-M-w
-4) sp-backward-copy-sexp (&optional arg)               ;; C-- C-M-w
-5) sp-unwrap-sexp (&optional arg)                      ;; M-<delete>
-6) sp-backward-unwrap-sexp (&optional arg)             ;; M-<backspace>
-7) sp-transpose-sexp                                   ;; C-M-t
-8) sp-splice-sexp (&optional arg)                      ;; M-D
-9) sp-splice-sexp-killing-forward (&optional arg)      ;; C-M-<delete>
-10) sp-splice-sexp-killing-backward (&optional arg)     ;; C-M-<backspace>
-11) sp-splice-sexp-killing-around (&optional arg)       ;; C-S-<backspace>
-12) sp-convolute-sexp (&optional arg)                   ;; none
-13) sp-absorb-sexp (&optional arg)                      ;; none
-14) sp-emit-sexp (&optional arg)                        ;; none
-15) sp-extract-before-sexp (&optional arg)              ;; none
-16) sp-extract-after-sexp (&optional arg)               ;; none
-17) sp-split-sexp (arg)                                 ;; none
-18) sp-join-sexp (&optional arg)                        ;; none
-19) sp-rewrap-sexp (&optional arg)                      ;; none
-20) sp-swap-enclosing-sexp (&optional arg)              ;; none
-21) sp-forward-slurp-sexp (&optional arg)               ;; C-<right>
-22) sp-forward-barf-sexp (&optional arg)                ;; C-<left>
-23) sp-backward-slurp-sexp (&optional arg)              ;; C-M-<left>
-24) sp-backward-barf-sexp (&optional arg)               ;; C-M-<right>
-25) sp-add-to-next-sexp (&optional arg)                 ;; none
-26) sp-add-to-previous-sexp (&optional arg)             ;; none
-27) sp-select-next-thing (&optional arg)                ;; C-M-]
-28) sp-select-previous-thing (&optional arg)            ;; C-[
-29) sp-select-next-thing-exchange (&optional arg)       ;; C-]
-30) sp-select-previous-thing-exchange (&optional arg)   ;; C-- C-]
+1) sp-kill-sexp (&optional arg)                                 
+2) sp-backward-kill-sexp (&optional arg)                   
+3) sp-copy-sexp (&optional arg)                       
+4) sp-backward-copy-sexp (&optional arg)             
+5) sp-unwrap-sexp (&optional arg)                     
+6) sp-backward-unwrap-sexp (&optional arg)            
+7) sp-transpose-sexp                                  
+8) sp-splice-sexp (&optional arg)                     
+9) sp-splice-sexp-killing-forward (&optional arg)     
+10) sp-splice-sexp-killing-backward (&optional arg)   
+11) sp-splice-sexp-killing-around (&optional arg)     
+12) sp-convolute-sexp (&optional arg)                 
+13) sp-absorb-sexp (&optional arg)                    
+14) sp-emit-sexp (&optional arg)                      
+15) sp-extract-before-sexp (&optional arg)            
+16) sp-extract-after-sexp (&optional arg)             
+17) sp-split-sexp (arg)                               
+18) sp-join-sexp (&optional arg)                      
+19) sp-rewrap-sexp (&optional arg)                    
+20) sp-swap-enclosing-sexp (&optional arg)            
+21) sp-forward-slurp-sexp (&optional arg)             
+22) sp-forward-barf-sexp (&optional arg)              
+23) sp-backward-slurp-sexp (&optional arg)            
+24) sp-backward-barf-sexp (&optional arg)             
+25) sp-add-to-next-sexp (&optional arg)               
+26) sp-add-to-previous-sexp (&optional arg)           
+27) sp-select-next-thing (&optional arg)              
+28) sp-select-previous-thing (&optional arg)          
+29) sp-select-next-thing-exchange (&optional arg)     
+30) sp-select-previous-thing-exchange (&optional arg) 
 
 *** Wrapping
 

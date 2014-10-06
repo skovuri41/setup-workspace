@@ -9,12 +9,12 @@
 :END:
 
 * [[http://blog.mattgauger.com/blog/2014/09/15/clojure-code-quality-tools/?utm_source%3Ddlvr.it&utm_medium%3Dtwitter&utm_campaign%3DFeed%253A%2BMattGaugerBlog%2B%2528Matt%2BGauger%2527s%2BBlog%2529][Clojure Quality Tools]]
-:PROPERTIES:
+:PROPERTIES: Clojure
 :CREATED: [2014-09-18 Thu 00:01]
 :END:
 
 * [[http://debasishg.blogspot.com/2010/08/random-thoughts-on-clojure-protocols.html][Debashish Clojure Protocol Explaination]]
-:PROPERTIES:
+:PROPERTIES: Clojure
 :CREATED: [2014-09-18 Thu 00:04]
 :END:
 
@@ -42,7 +42,7 @@ highl level on all the available key feature of emacs org-mode
 * [[https://github.com/tlipski/clojure-webapps][clojure-webapps @ github ]] 
 :PROPERTIES:
 :CREATED:  2014-09-21
-:CATEGORY: clojure
+:CATEGORY: Clojure
 :END:
 clojure webapps excercises as in video demo by the author.
 * [[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][Howard Abrams Emacs Org File]] 
@@ -72,3 +72,37 @@ Article showing various ways to parse and process xml data.
 :CREATED:  2014-10-02
 :CATEGORY:Clojure
 :END:
+* [[http://blog.muhuk.com/2014/09/28/is_clojure_homoiconic.html#.VCjjHPk7uSo][Is Clojure Homoiconic Blog]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: Clojure Emacs
+:END:
+* [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-clojure.html][OrgMode Clojure Babel Setup]] 
+:PROPERTIES:
+:CREATED:  2014-09-21
+:CATEGORY: Clojure Emacs
+:END:
+* [[http://howardabrams.com/projects/dot-files/emacs-clojure.html][Howard Abrams Clojure Emacs]] 
+:PROPERTIES:
+:CREATED:  2014-10-03
+:CATEGORY:Clojure Emacs
+:END:
+* http://www.falkoriemenschneider.de/a__2014-09-17__Programming-without-objects.html
+:PROPERTIES:
+:CREATED:  2014-10-03
+:CATEGORY:Clojure
+:END:
+
+
+
+
+* http://www.youtube.com/watch?v=NvxyTKyXSRg
+* http://www.youtube.com/watch?v=6mTbuzafcII
+* https://www.youtube.com/watch?v=lKXe3HUG2l4
+
+* http://juanjoalvarez.net/en/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/
+
+* http://yogthos.github.io/ClojureDistilled.html
+* http://blog.muhuk.com/2014/09/28/is_clojure_homoiconic.html
+* http://www.rkn.io/2014/03/05/clojure-cookbook-polymorphic-functions/
+

@@ -1,5 +1,15 @@
 * Configuration
-*** About this file 
+*** About this file
+
+My emacs configuration based on org-mode literate programming style.
+***** Credits
+******* [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua]]
+******* [[https://github.com/steckerhalter/steckemacs/blob/master/steckemacs.org][SteckEmacs]]
+******* [[https://github.com/howardabrams/dot-files][Howard Abrams]]
+******* [[http://www.emacswiki.org/emacs/][EmacsWiki]]
+******* [[https://github.com/technomancy/emacs-starter-kit/tree/v2][emacs-starter-kit]]
+******* 
+ 
 *** Emacs Initialization
 ***** Code
 ******* init.el
@@ -61,7 +71,7 @@ from *emacs*.
 #+BEGIN_SRC emacs-lisp
 
 (setq package-archives nil)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+;;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
@@ -120,7 +130,8 @@ If REPOSITORY is specified, use that."
   ac-cider
   org-bullets
   guide-key 
-  smart-mode-line
+  smart-mode-line 
+  undo-tree
   )
  
  "A list of packages to ensure
@@ -363,6 +374,17 @@ This function allows to get two vertically splitted windows into a horizontal sp
   (interactive)
   (nxml-pretty-print-region (point-min) (point-max)))
 
+;; XML pretty print
+(defun pretty-print-xml-region (begin end)
+  (interactive "r")
+  (save-excursion
+    (nxml-mode)
+    (goto-char begin)
+    (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+      (backward-char) (insert "\n"))
+    (indent-region begin end))
+  (message "Ah, much better!"))
+
 (defun nxml-kill-tag-contents ()
   "Copy the contents between two tags"
 ;  (interactive "*p\ncCopy tag contents: ") ; this expects arguments input
@@ -429,11 +451,6 @@ This function allows to get two vertically splitted windows into a horizontal sp
   (forward-line -1)
   (indent-for-tab-command))
 
-(global-set-key (kbd "<C-return>") 'open-line-below)
-(global-set-key (kbd "<C-S-return>") 'open-line-above)
-
-;;;; Rebind goto-line line
-
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
   (interactive)
@@ -443,8 +460,6 @@ This function allows to get two vertically splitted windows into a horizontal sp
         (goto-line (read-number "Goto line: ")))
     (linum-mode -1)))
 
-(global-set-key [remap goto-line] 'goto-line-with-feedback)
-(define-key global-map [remap goto-line] 'goto-line-with-feedback)
 ;;;;Join Lines
 (defun join-lines ()
    "If at the end of the line, will join the following line to the
@@ -467,8 +482,6 @@ This function allows to get two vertically splitted windows into a horizontal sp
      (delete-char 1)
      (delete-trailing-whitespace (point) (point-at-eol))))
 
- (global-set-key (kbd "M-j") 'join-lines)
-
 ;;;; copy-line with variable arugments
 (defun copy-line (&optional arg)
   "Copy lines (as many as prefix argument) in the kill ring"
@@ -477,7 +490,6 @@ This function allows to get two vertically splitted windows into a horizontal sp
                   (line-beginning-position (+ 1 arg)))
   (message "%d line(s) copied" arg ))
 
-(global-set-key "\C-c\C-k" 'copy-line)
 
 #+END_SRC
 ***** emacs home directory
@@ -671,6 +683,7 @@ may want to put  auto-complete into your completion-at-point-functions:
 (add-hook 'clojure-mode-hook 'subword-mode)
 (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+(add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
 #+END_SRC
 ***** clj-refactor
 ***** cljdoc
@@ -983,9 +996,7 @@ Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_fri
 (add-hook 'org-shiftleft-final-hook 'windmove-left)
 (add-hook 'org-shiftdown-final-hook 'windmove-down)
 (add-hook 'org-shiftright-final-hook 'windmove-right)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cj" 'org-journal-entry)
-(define-key global-map "\C-cc" 'org-capture)
+
 #+END_SRC
 ******* Taking Notes
 ******* Agenda
@@ -1235,6 +1246,14 @@ Github: https://github.com/Fuco1/smartparens
   ;;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 #+END_SRC***** sublime-theme
 ***** undo-tree
+#+BEGIN_SRC emacs-lisp
+(global-undo-tree-mode)
+
+#+END_SRC
+
+#+RESULTS:
+: t
+
 ***** yasnippet
 ******* Installation
  #+BEGIN_SRC emacs-lisp
@@ -1302,8 +1321,7 @@ Github: https://github.com/Fuco1/smartparens
 ;; Font size
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
-;;; remap undo
-;;(global-set-key (kbd "C-/") 'undo)
+
 (global-set-key (kbd "C-c i") 'indent-region)
 (global-set-key (kbd "C-c l") 'linum-mode)
 (global-set-key (kbd "C-c g") 'goto-line)
@@ -1326,12 +1344,33 @@ Github: https://github.com/Fuco1/smartparens
 (global-set-key (kbd "C-c d") 'desktop-session-restore)
 (global-set-key (kbd "C-c D") 'desktop-session-save)
 
+(global-set-key (kbd "M-j") 'join-lines)
+(global-set-key (kbd "C-c o") 'open-line-below)
+(global-set-key (kbd "C-c O") 'open-line-above)
+(global-set-key "\C-c\C-k" 'copy-line)
+
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+(define-key global-map [remap goto-line] 'goto-line-with-feedback)
+
+;; (global-set-key (kbd "<f2> c") 'cider-jack-in)
+(eval-after-load 'cider
+  '(define-key clojure-mode-map (kbd "<f2> c") 'cider-jack-in))
+
+;; org-mode
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cj" 'org-journal-entry)
+(define-key global-map "\C-cc" 'org-capture)
+
 #+END_SRC
+
+#+RESULTS:
+: goto-line-with-feedback
+
 * Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
-*** TODO goto-linum remap keybinding not working
+*** DONE goto-linum remap keybinding not working
 *** TODO flyspell missing
-*** TODO configure cider and lein
+*** TODO configure cider and lein, version 0.8 not working yet.
 *** TODO configure helm and projectile key bindings
 *** TODO cider newer version not working, missing package queue
 *** TODO work on copy rectangle emacs-lisp script
@@ -1341,6 +1380,8 @@ Github: https://github.com/Fuco1/smartparens
 *** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
 *** TODO emacs etags, usage study
 *** TODO emacs start maximized disabled, revisit
+*** TODO multiple cursors
+*** DONE undo tree
 
 
 

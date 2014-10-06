@@ -1,3 +1,6 @@
+
+* Tmux configuration
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Ctrl-b the prefix that sends a keybinding to tmux instead of to the shell or program running in tmux.
@@ -18,11 +21,15 @@ Ctrl-b : command mode.
 ===
 
 General
+----------
+
 ? = List all key bindings.
 d = Detach the current client.
 : = Enter the tmux command prompt.
 
 Creating/Managing windows
+-------------------------
+
 c = Create a new window
 n = Change to the next window.
 p = Change to the previous window.
@@ -32,8 +39,12 @@ l = Move to the previously selected window.
 ,= Rename the current window.
 w = Choose the current window interactively.
 :, then type list-windows enter = Display the list of windows.
+& = Closes the current window after prompting for confirmation. 
+% = Divides the current window in half vertically. 
+" = Divides the current window in half horizontally
 
 Creating/Managing panes
+------------------------------
 " = Split the current pane into two, top and bottom.
 % = Split the current pane into two, left and right.
 o = Select the next pane in the current window.
@@ -44,8 +55,15 @@ Ctrl+o = Rotate the panes in the current window forwards.
 Alt+1 to Alt+5 = Arrange panes in one of the five preset layouts: even-horizontal, even-vertical, main-horizontal, main-vertical, or tiled.
 x = Kill the current pane.
 ! = Break the current pane out of the window.
+q = display-panes
+
+Prefix o = Cycles through open panes.
+Prefix q = Momentarily displays pane numbers in each pane.
+Prefix x = Closes the current pane after prompting for confirmation. 
+Prefix Space = Cycles through the various pane layouts.
 
 Copy, Paste and Scroll operations
+-------------------------------------------------------------
 The keys available depend on whether emacs (default) or vi mode is selected. The mode-keys option can be set int .tmux.conf for vi mode.
 [ = Enter copy mode to copy text or view the history.
 ] = Paste the most recently copied buffer of text.
@@ -55,6 +73,7 @@ The keys available depend on whether emacs (default) or vi mode is selected. The
 
 
 Switch between sessions:
+--------------------------------------
 C-a (          previous session
 C-a )          next session
 C-a L          ‘last’ (previously used) session
@@ -66,11 +85,12 @@ tmux attach -t session_name - attaches to an existing tmux session named session
 tmux switch -t session_name - switches to an existing session named session_name
 tmux list-sessions - lists existing tmux sessions
 tmux detach (prefix + d) - detach the currently attached session
+tmux kill-session -t myname
 
 
 prefix + z to maximize pane to the entire window
 
-
+* Sample configuration
 ====================
 File~/.tmux.conf
 set -g default-terminal "screen-256color"   # use 256 colors
@@ -114,6 +134,15 @@ set -g pane-border-fg '#555555'
 bind r source-file ~/.tmux.conf
 =====================================
 
+* tmuxifier
+***  git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
+Then add $HOME/.tmuxifier/bin to your PATH to make the tmuxifier
+executable available to you:
 
+export PATH="$HOME/.tmuxifier/bin:$PATH"
 
+[[https://github.com/jimeh/tmuxifier][Tmuxifier github ]]
 
+Updating:
+cd ~/.tmuxifier # or where you've cloned tmuxifier to
+git pull

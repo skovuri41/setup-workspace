@@ -1,0 +1,90 @@
+* Clojure Basics
+*** Building Blocks of Clojure
+- Forms
+- Reader Macros
+- Functions
+- Vars,Bindings and Namespaces
+- Flow Control
+- MetaData
+- Namespaces
+- Destructuring
+*** Data Structures
+There are seven different primary abstractions in which Clojure’s data structure implementations participate:
+• Collection
+• Sequence
+• Associative
+• Indexed
+• Stack
+• Set
+• Sorted
+
+- Persitence, Sequences and Complexity
+- Lists
+- Vectors
+- Sets
+- Maps
+- 
+- 
+*** Repl
+*** Error Handling
+* Clojure Concepts 
+*** Homoiconic 
+*** Immutability, Value of values
+*** State and Identity
+*** 
+* Functional Programming
+- Higher Order Functions
+- Closures
+- Partial Application and Currying
+- Laziness
+- Recursion
+- Tail Call Recursion
+- Trampoline
+- Immutability
+
+* Clojure State, Concurrency
+- Identities and Values
+- Refs
+- Atoms
+- STM
+- Agents
+- Vars
+- Futures and Promises
+- 
+
+* Building Abstractions
+- Protocols
+- DataTypes
+- Records
+- Macros
+- Multimethods
+
+* Clojure DSL 
+* Java Interop
+* Performance
+  - Type Hints
+  - Memoization
+  - Transients
+  - Chunked Sequences
+  - Coercion
+  - 
+* Applied Clojure
+*** Clojure Data Analysis
+
+*** Scaling through Messaging
+
+*** Data Storage with Clojure
+
+*** Clojure and the web
+
+*** 
+* Unit Testing
+* Clojure Cookbook Recipes
+*** General Computing
+*** Local I/O
+*** Network I/O
+*** Databases
+*** Distributed Computation
+*** Performance and Production
+*** Web Applications
+

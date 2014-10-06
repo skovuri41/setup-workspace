@@ -42,5 +42,8 @@ fi
 # if [ -d "${HOME}/info" ]; then
 #   INFOPATH="${HOME}/info:${INFOPATH}"
 # fi
-PATH=$PATH:~/bin
+PATH="$PATH:~/bin:${HOME}/tmuxifier/bin"
+eval "$(tmuxifier init -)"
 
+
+echo "tmuxifier"
