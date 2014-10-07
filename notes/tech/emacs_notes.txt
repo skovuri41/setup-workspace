@@ -491,5 +491,5 @@ for reference.
   |--------------------+--------------------------------------------------------------+----------------|
   |                    |                                                              |                |
  
- 
-* 
+* Emacs on Cygwin Crashes frequently
+run' rebaseall -v ' command from /cygwin/ash window

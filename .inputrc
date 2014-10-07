@@ -72,9 +72,17 @@
   # a history expansion in the line
   #Space: magic-space
 #$endif
+
 "\C-y": paste-from-clipboard
-
-
 set editing-mode emacs
-
 set bell-style none
+
+
+"\e[A":history-search-backward
+"\e[B":history-search-forward
+
+set blink-matching-paren on
+set colored-stats on
+set completion-ignore-case on
+set show-all-if-ambiguous on
+
