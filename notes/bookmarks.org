@@ -95,7 +95,6 @@ Article showing various ways to parse and process xml data.
 
 
 
-
 * http://www.youtube.com/watch?v=NvxyTKyXSRg
 * http://www.youtube.com/watch?v=6mTbuzafcII
 * https://www.youtube.com/watch?v=lKXe3HUG2l4
@@ -105,4 +104,21 @@ Article showing various ways to parse and process xml data.
 * http://yogthos.github.io/ClojureDistilled.html
 * http://blog.muhuk.com/2014/09/28/is_clojure_homoiconic.html
 * http://www.rkn.io/2014/03/05/clojure-cookbook-polymorphic-functions/
+* [[http://nathanmarz.com/blog/history-of-apache-storm-and-lessons-learned.html?utm_source=dlvr.it&utm_medium=twitter][Nathan Marz History of Apache Storm]] 
+:PROPERTIES:
+:CREATED:  2014-10-07
+:CATEGORY:Clojure
+:END:
+
+
+
+
+* [[https://github.com/matthiasn/Clojure-Resources][Clojure Resources on Github]] 
+:PROPERTIES:
+:CREATED:  2014-10-07
+:CATEGORY:Clojure
+:END:
+
+
+
 
