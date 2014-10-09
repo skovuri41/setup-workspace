@@ -77,6 +77,8 @@ from *emacs*.
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
 (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
+(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
+
 
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
@@ -132,6 +134,7 @@ If REPOSITORY is specified, use that."
   guide-key 
   smart-mode-line 
   undo-tree
+  workgroups
   )
  
  "A list of packages to ensure
@@ -215,7 +218,8 @@ Disk space is cheap. Save lots.
  custom-unlispify-menu-entries nil      ;M-x customize should not cripple menu entries
  custom-unlispify-tag-names nil         ;M-x customize should not cripple tags
  show-paren-delay 0
- visible-bell t)
+ visible-bell t
+ winner-mode 1)
 
 (put 'narrow-to-region 'disabled nil)   ;narrow to region should be enabled by default
 ;;Suppress symbolic link warnings
@@ -584,7 +588,7 @@ minor mode, you can add to it with this magic:
  
  ;;You can hide the *nrepl-connection* and *nrepl-server* buffers from
  ;;appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
- (setq nrepl-hide-special-buffers t)
+ ;;(setq nrepl-hide-special-buffers t)
 
  ;;When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible.
  ;;They'll always be visible in list-buffers (C-x C-b).
@@ -680,8 +684,10 @@ may want to put  auto-complete into your completion-at-point-functions:
 ***** clojure-mode 
 #+BEGIN_SRC emacs-lisp
 ;;(require 'subword-mode)
+(require 'clojure-mode)
+;;(require 'clojure-mode-extra-font-locking)
 (add-hook 'clojure-mode-hook 'subword-mode)
-(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+;;(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 (add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
 #+END_SRC
@@ -1110,7 +1116,7 @@ is enabled by default whenever native indexing is enabled.
 
 ***** rainbow-mode
 #+BEGIN_SRC emacs-lisp
-(use-package rainbow-delimiters)
+(require 'rainbow-delimiters)
 (dolist (hook '(css-mode-hook
                 html-mode-hook
                 js-mode-hook
@@ -1118,6 +1124,7 @@ is enabled by default whenever native indexing is enabled.
                 org-mode-hook
                 text-mode-hook 
                 cider-repl-mode-hook
+                clojure-mode-hook
                 ))
   (add-hook hook 'rainbow-delimiters-mode))
 #+END_SRC
@@ -1253,6 +1260,50 @@ Github: https://github.com/Fuco1/smartparens
 
 #+RESULTS:
 : t
+***** winner mode
+You can save split-window config to register, like this:
+
+Call window-configuration-to-register 【Ctrl+x r w】 (then give it a letter or digit as name).
+Call jump-to-register 【Ctrl+x r j】 to restore a previously saved configuration.
+Note: this doesn't work when you restart emacs, even if you have
+desktop-save-mode on.
+***** workgroups
+https://github.com/tlh/workgroups.el
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'workgroups)
+(workgroups-mode 1)
+;;(wg-load "/path/to/saved/workgroups")
+
+#+END_SRC
+
+
+Workgroup creation:
+Hit <prefix> c to issue the command wg-create-workgroup, give it a
+name, hit RET, and a new workgroup is created.
+
+Workgroup Switching:
+<prefix> v issues the command wg-switch-to-workgroup. This will do a
+completing-read (with ido if it's enabled) on the available workgroup
+names, and switch to the workgroup with that name. <prefix> n will
+switch to the workgroup rightward in the workgroups list from the
+current workgroup, and <prefix> p will switch to the one leftward in
+the list. <prefix> 0 through <prefix> 9 switch to the workgroup at
+that position in the workgroups list. 
+
+Morph:
+You can toggle it off and on with <prefix> w (wg-toggle-morph), or
+you can set the value of wg-morph-on to t or nil to turn it on or off
+permenently.
+
+Saving and Loading
+
+Saving and loading was the original motivation for writing
+Workgroups. You can save your workgroups to a file with <prefix> C-s
+(wg-save) and you can load workgroups from a file with <prefix> C-l
+(wg-load).
+
 
 ***** yasnippet
 ******* Installation
@@ -1382,6 +1433,8 @@ Github: https://github.com/Fuco1/smartparens
 *** TODO emacs start maximized disabled, revisit
 *** TODO multiple cursors
 *** DONE undo tree
+
+
 
 
 
