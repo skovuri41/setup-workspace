@@ -115,6 +115,7 @@ If REPOSITORY is specified, use that."
   helm-projectile
   helm-descbinds
   helm-gtags
+  helm-swoop
   ipretty
   key-chord
   grizzl
@@ -135,6 +136,10 @@ If REPOSITORY is specified, use that."
   smart-mode-line 
   undo-tree
   workgroups
+  clojure-cheatsheet
+  helm-orgcard
+  4clojure 
+  iedit
   )
  
  "A list of packages to ensure
@@ -287,16 +292,6 @@ achieved in the second expression.
 I put that line into =~/.user.el= .
 To avoid getting this line into the config I use =:tangle no= as an option in the org-mode source block header.
 *** Custom Functions
-***** my-indent-whole-buffer
-
-#+BEGIN_SRC emacs-lisp
-(defun my-indent-whole-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-#+END_SRC
-
-Indent the whole buffer with one command. Bound to =C-h TAB=.
-
 ***** my-isearch-goto-match-beginning
 
 #+BEGIN_SRC emacs-lisp
@@ -308,10 +303,10 @@ Indent the whole buffer with one command. Bound to =C-h TAB=.
 Make =isearch-forward= put the cursor at the start of the search, not the end, so that isearch can be used for navigation. 
 See also http://www.emacswiki.org/emacs/IsearchOtherEnd.
 
-***** my-show-file-name
+***** show-file-name
 
 #+BEGIN_SRC emacs-lisp
-(defun my-show-file-name ()
+(defun show-file-name ()
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name))
@@ -320,22 +315,22 @@ See also http://www.emacswiki.org/emacs/IsearchOtherEnd.
 
 Display and copy the full path of the file associated with the current buffer to the kill ring.
 
-***** my-switch-to-minibuffer-window
+***** switch-to-minibuffer-window
 
 Sometimes the minibuffer loses focus and I almost can get back to it. This function does it quickly.
 
 #+BEGIN_SRC emacs-lisp
-(defun my-switch-to-minibuffer-window ()
+(defun switch-to-minibuffer-window ()
   "Switch to minibuffer window (if active)."
   (interactive)
   (when (active-minibuffer-window)
     (select-window (active-minibuffer-window))))
 #+END_SRC
 
-***** my-toggle-window-split
+***** toggle-window-split
 
 #+BEGIN_SRC emacs-lisp
-(defun my-toggle-window-split ()
+(defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -362,7 +357,7 @@ Sometimes the minibuffer loses focus and I almost can get back to it. This funct
 #+END_SRC
 
 This function allows to get two vertically splitted windows into a horizontal split and back.
-***** my-url-insert-file-contents
+***** url-insert-file-contents
 
 #+BEGIN_SRC emacs-lisp
 (defun my-url-insert-file-contents (url)
@@ -518,6 +513,29 @@ This function allows to get two vertically splitted windows into a horizontal sp
   (define-key global-map (this-command-keys)
     'toggle-kbd-macro-recording-on)
   (end-kbd-macro))
+
+#+END_SRC
+***** helm-clojure-headlines
+
+[[http://blog.jenkster.com/2013/10/a-tip-for-navigating-clojure-files-in-emacs.html][Navigating Clojure Files in Emacs]]
+
+#+BEGIN_SRC emacs-lisp
+(defun helm-clojure-headlines ()
+  "Display headlines for the current Clojure file."
+  (interactive)
+  (helm-mode t)
+  (helm :sources '(((name . "Clojure Headlines")
+                    (volatile)
+                    (headline "^[;(]")))))
+#+END_SRC
+***** Reindent the whole buffer
+#+BEGIN_SRC emacs-lisp
+(defun reindent-whole-buffer ()
+  "Reindent the whole buffer."
+  (interactive)
+  (indent-region (point-min)
+                 (point-max)))
+;;(global-set-key (kbd "M-Q") 'reindent-whole-buffer)
 
 #+END_SRC
 *** Advices
@@ -879,6 +897,38 @@ You might want to checkout the [[https://github.com/emacs-helm/helm/wiki][Helm W
 
 #+END_SRC
 ***** helm-swoop
+#+BEGIN_SRC emacs-lisp
+(require 'helm-swoop)
+
+;; ;; Change keybinds to whatever you like :)
+(global-set-key (kbd "M-i") 'helm-swoop)
+(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
+(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+;; (global-set-key (kbd "C-x M-i") 'helm-multi-swoop-all)
+
+;; ;; When doing isearch, hand the word over to helm-swoop
+(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+;; (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+
+;; ;; Save buffer when helm-multi-swoop-edit complete
+;; (setq helm-multi-swoop-edit-save t)
+
+;; ;; If this value is t, split window inside the current window
+(setq helm-swoop-split-with-multiple-windows t)
+
+;; ;; Split direction. 'split-window-vertically or 'split-window-horizontally
+(setq helm-swoop-split-direction 'split-window-horizontally)
+
+;; ;; If nil, you can slightly boost invoke speed in exchange for text color
+;; (setq helm-swoop-speed-or-color nil)
+
+#+END_SRC
+
+Edit mode
+
+While doing helm-swoop type C-c C-e to enter the edit mode. Before
+enter the edit mode, you can choose some lines marked by C-SPC or
+M-SPC to edit. Apply changes to original buffer type C-x C-s.
 ***** ido-mode
 #+BEGIN_EXAMPLE
 Interactively do things with buffers and files
@@ -906,7 +956,15 @@ Use =C-j= if you want to create a file with what you have entered (and not the m
 (ido-vertical-mode 1)
 
 #+END_SRC
+***** iedit
+Iedit allows you to edit one occurrence of some text in a buffer
+(possibly narrowed) or region, and simultaneously have other
+occurrences edited in the same way, with visual feedback as you type.
 
+#+BEGIN_SRC emacs-lisp
+(require 'iedit)
+(setq iedit-unmatched-lines-invisible-default t)
+#+END_SRC
 ***** ipretty
 #+BEGIN_SRC emacs-lisp
 (use-package ipretty 
