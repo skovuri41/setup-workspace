@@ -118,7 +118,8 @@ Article showing various ways to parse and process xml data.
 :CREATED:  2014-10-07
 :CATEGORY:Clojure
 :END:
-
-
-
-
+* [[http://chasemerick.files.wordpress.com/2011/07/choosingtypeforms2.png][Choosing Clojure Data Type Flow Chart by Chas Emerick]] 
+:PROPERTIES:
+:CREATED:  2014-10-10
+:CATEGORY:Clojure
+:END:
