@@ -28,6 +28,4 @@ eval "$(tmuxifier init -)"
 
 #export HISTCONTROL=ignoredups
 export HISTCONTROL=ignoreboth
-
-
-
+export TERM=xterm-256color

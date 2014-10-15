@@ -79,17 +79,17 @@ from *emacs*.
 (add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
 (add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
 
-
+ 
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
 (when (not package-archive-contents)
     (package-refresh-contents))
-	
+    
 (defun my-package-install (package &optional repository)
   "Install PACKAGE if it has not yet been installed.
-If REPOSITORY is specified, use that."
+   If REPOSITORY is specified, use that."
   (unless (package-installed-p package)
     (let ((package-archives (if repository
                                 (list (assoc repository package-archives))
@@ -121,7 +121,6 @@ If REPOSITORY is specified, use that."
   grizzl
   json-mode
   expand-region
-  auto-complete
   smex
   flyspell
   plantuml-mode
@@ -140,6 +139,8 @@ If REPOSITORY is specified, use that."
   helm-orgcard
   4clojure 
   iedit
+  latest-clojure-libraries 
+  company
   )
  
  "A list of packages to ensure
@@ -161,7 +162,7 @@ after adding these for the first time.
 *** Configuration
 ***** User Settings
 #+BEGIN_SRC emacs-lisp
-(when (file-readable-p "~/.user.el") (load "~/.user.el"))
+(when (file-readable-p "~/elisp/user.el") (load "~/elisp/user.el"))
 #+END_SRC
 ***** Encoding
 #+BEGIN_SRC emacs-lisp
@@ -215,7 +216,7 @@ Disk space is cheap. Save lots.
  send-mail-function 'sendmail-send-it
  kill-ring-max 5000                     ;truncate kill ring after 5000 entries
  mark-ring-max 5000                     ;truncate mark ring after 5000 entries
- mouse-autoselect-window -.1            ;window focus follows the mouse pointer
+ mouse-autoselect-window t              ;window focus follows the mouse pointer
  mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))) ;make mouse scrolling smooth
  indicate-buffer-boundaries 'left       ;fringe markers
  split-height-threshold 110             ;more readily split horziontally
@@ -284,6 +285,11 @@ Also Emacs should be able to kill processes without asking which is
 achieved in the second expression. 
 
 ***** Themes,Faces,Frame
+
+#+BEGIN_SRC emacs-lisp
+(load-theme 'zenburn t)
+
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle no
 (set-face-attribute 'default nil :family "Bitstream Vera Sans Mono" :height 89)
@@ -538,6 +544,22 @@ This function allows to get two vertically splitted windows into a horizontal sp
 ;;(global-set-key (kbd "M-Q") 'reindent-whole-buffer)
 
 #+END_SRC
+***** save macro to init file
+#+BEGIN_SRC emacs-lisp
+ (defun save-macro (name)                  
+    "save a macro. Take a name as argument
+     and save the last defined macro under 
+     this name at the end of your .emacs"
+     (interactive "SName of the macro :")  ; ask for the name of the macro    
+     (kmacro-name-last-macro name)         ; use this name for the macro    
+     (find-file user-init-file)            ; open ~/.emacs or other user init file 
+     (goto-char (point-max))               ; go to the end of the .emacs
+     (newline)                             ; insert a newline
+     (insert-kbd-macro name)               ; copy the macro 
+     (newline)                             ; insert a newline
+     (switch-to-buffer nil))               ; return to the initial buffer
+
+#+END_SRC
 *** Advices
 
 #+BEGIN_SRC emacs-lisp
@@ -565,7 +587,7 @@ line instead."
   (require 'ace-jump-mode)
 #+END_SRC
 ***** auto-complete
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (require 'auto-complete-config)
 (setq ac-delay 0.0)
 (setq ac-quick-help-delay 0.5)
@@ -677,9 +699,10 @@ minor mode, you can add to it with this magic:
  ;;Note that the history is written to the file when you kill the REPL buffer (which includes invoking cider-quit) or you quit Emacs.
 
  #+END_SRC
+
 Auto completion configuration for Cider.
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle no
   (require 'ac-cider)
   (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
   (add-hook 'cider-mode-hook 'ac-cider-setup)
@@ -691,7 +714,7 @@ Auto completion configuration for Cider.
 If you want to trigger auto-complete using TAB in CIDER buffers, you
 may want to put  auto-complete into your completion-at-point-functions:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (defun set-auto-complete-as-completion-at-point-function ()
   (setq completion-at-point-functions '(auto-complete)))
 
@@ -712,6 +735,34 @@ may want to put  auto-complete into your completion-at-point-functions:
 ***** clj-refactor
 ***** cljdoc
 ***** color-theme
+***** company
+#+BEGIN_SRC emacs-lisp
+(require 'company)
+(setq company-idle-delay 0.3)
+(setq company-tooltip-limit 20)
+(setq company-minimum-prefix-length 2)
+(setq company-echo-delay 0)
+;; (setq company-auto-complete nil)
+;; (add-to-list 'company-backends 'company-dabbrev t)
+;; (add-to-list 'company-backends 'company-ispell t)
+;; (add-to-list 'company-backends 'company-files t)
+(add-to-list 'company-backends 'company-yasnippet )
+;;(setq company-backends (remove 'company-dabbrev company-backends))
+
+;; (setq company-backends (remove 'company-ropemacs company-backends))
+(global-company-mode 1)
+#+END_SRC
+
+
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun my-pcomplete-capf ()
+  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+(add-hook 'org-mode-hook #'my-pcomplete-capf)
+#+END_SRC
+This enables company completion for org-mode built-in commands and
+tags.
+
 ***** desktop
 #+BEGIN_SRC emacs-lisp :tangle yes
 ;; use only one desktop
@@ -779,6 +830,22 @@ may want to put  auto-complete into your completion-at-point-functions:
  deft-use-filename-as-title t
  deft-auto-save-interval 20)
  (bind-key [f9] 'deft)))
+#+END_SRC
+***** diminish
+#+BEGIN_SRC emacs-lisp
+;; Diminish modeline clutter
+(require 'diminish)
+(eval-after-load "yasnippet" '(diminish 'yas-minor-mode)) 
+(eval-after-load "guide-key" '(diminish 'guide-key-mode))
+(eval-after-load "smartparens" '(diminish 'smartparens-mode))
+(eval-after-load "clojure-mode"
+  '(defadvice clojure-mode (after clj-rename-modeline activate)
+     (setq mode-name "Clj")))
+(eval-after-load "eldoc" '(diminish 'eldoc-mode))
+(eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
+(eval-after-load "helm-mode" '(diminish 'helm-mode))
+(eval-after-load "workgroups" '(diminish 'workgroups-mode))
+
 #+END_SRC
 ***** eww
 ***** flx-ido
@@ -1362,7 +1429,6 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (wg-save) and you can load workgroups from a file with <prefix> C-l
 (wg-load).
 
-
 ***** yasnippet
 ******* Installation
  #+BEGIN_SRC emacs-lisp
@@ -1437,6 +1503,7 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key (kbd "C-c i") 'ibuffer)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
+
 
 ;; Set keybindings for cycling buffers
 (global-set-key [C-prior] 'previous-buffer)
