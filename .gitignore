@@ -60,3 +60,10 @@ Dropbox
 .emacs.d/places
 .emacs.d/bookmarks
 .emacs.d/init.el
+tmuxifier/*
+.ssh/known_hosts
+.ssh/id_rsa
+.ssh/id_rsa.pub
+work/clojure/cider-repl-history.txt
+.lein/repl-port
+.lein/self-installs/leiningen-2.5.0-standalone.jar
