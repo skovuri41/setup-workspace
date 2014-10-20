@@ -94,7 +94,6 @@ Article showing various ways to parse and process xml data.
 :END:
 
 
-
 * http://www.youtube.com/watch?v=NvxyTKyXSRg
 * http://www.youtube.com/watch?v=6mTbuzafcII
 * https://www.youtube.com/watch?v=lKXe3HUG2l4

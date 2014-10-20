@@ -116,7 +116,6 @@ from *emacs*.
   helm-gtags
   helm-swoop
   ipretty
-  key-chord
   grizzl
   json-mode
   expand-region
@@ -140,7 +139,10 @@ from *emacs*.
   iedit
   latest-clojure-libraries 
   company 
-  zenburn-theme
+  zenburn-theme 
+  drag-stuff 
+  inf-mongo 
+  bookmark+
   )
  
  "A list of packages to ensure
@@ -293,6 +295,7 @@ achieved in the second expression.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 ;;(set-face-attribute 'default nil :family "Bitstream Vera Sans Mono" :height 89)
+;;(set-face-attribute 'default nil :family "Inconsolata" :height 120)
 (set-default-font
      "-outline-Consolas-normal-r-normal-normal-14-97-96-96-c-*-iso8859-1")
 #+END_SRC
@@ -904,6 +907,13 @@ tags.
 (eval-after-load "workgroups" '(diminish 'workgroups-mode))
 
 #+END_SRC
+***** drag-stuff
+#+begin_src emacs-lisp :tangle yes
+(require 'drag-stuff)
+;;(drag-stuff-mode t)
+(drag-stuff-global-mode t)
+(add-to-list 'drag-stuff-except-modes 'org-mode)
+#+end_src
 ***** eww
 ***** flx-ido
 flx-ido quite recently which does indeed improve the flex matching.
@@ -1089,6 +1099,11 @@ occurrences edited in the same way, with visual feedback as you type.
 (require 'iedit)
 (setq iedit-unmatched-lines-invisible-default t)
 #+END_SRC
+***** inf-mongo
+#+begin_src emacs-lisp :tangle yes
+(require 'inf-mongo)
+(setq inf-mongo-command "C://Program Files//MongoDB 2.6 Standard//bin//mongo.exe 127.0.0.1:27018")
+#+end_src
 ***** ipretty
 #+BEGIN_SRC emacs-lisp
 (use-package ipretty 
@@ -1110,7 +1125,7 @@ Github: https://github.com/joshwnj/json-mode
 #+END_SRC
 
 ***** key-chord
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package key-chord
     :init
     (progn 
@@ -1382,9 +1397,9 @@ Github: https://github.com/Fuco1/smartparens
 (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
 (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
 
-(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
+(define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
 ;;-backward kill
-(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
+(define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
 ;;-backward copy
 
 (define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
@@ -1409,8 +1424,8 @@ Github: https://github.com/Fuco1/smartparens
 
 (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
 (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-(define-key sp-keymap (kbd "M-S") 'sp-split-sexp)
-(define-key sp-keymap (kbd "M-S-i") 'sp-join-sexp)
+(define-key sp-keymap (kbd "M-S-s") 'sp-split-sexp)
+(define-key sp-keymap (kbd "M-S-m") 'sp-join-sexp)
 
 (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
 (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
@@ -1605,7 +1620,7 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 *** TODO flyspell missing
 *** TODO configure cider and lein, version 0.8 not working yet.
 *** TODO configure helm and projectile key bindings
-*** TODO cider newer version not working, missing package queue
+*** IN-PROGRESS cider newer version not working, missing package queue
 *** TODO work on copy rectangle emacs-lisp script
 *** TODO ido m-x mode and helm m-x mode , compare and research
 *** TODO clj-refactor, cljdoc configuration
@@ -1615,6 +1630,10 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 *** TODO emacs start maximized disabled, revisit
 *** TODO multiple cursors
 *** DONE undo tree
+
+
+
+
 
 
 

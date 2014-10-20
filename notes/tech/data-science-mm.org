@@ -1,12 +1,8 @@
-
 * Machine Learning
-
 *** Algorithms
 
 * Data Mining
-
 * Big Data
-
 *** Hadoop Ecosystem
 
 *** Real Time Data
@@ -16,17 +12,13 @@
 *** Lambda Architecture
 
 * Tools
-
 * Data Visualization
 
 * Statistics
 
 * Communication and Presentation
-
 * Computer Science
-
 *** Programming Languages
-
 ***** Clojure
 
 ***** Java
@@ -42,7 +34,262 @@
 ***** 
 
 * Mathematics
-
 * Curicullam
 * Books
-* 
+* Notes
+*** NoSql Evaluation
+1. Installation and configuration
+2. Topology    
+3. Consistency 
+   Refers to the data consistency model that specifies a contract between a programmer and a system,
+   which guarantees that results of concurrent database operations will be predictable.
+
+   MongoDB
+   By default, the primary MongoDB node is targeted with all the reads and writes,  which means that 
+   data is fully consistent. However, if read operations are permitted on secondary nodes, MongoDB 
+   guarantees only eventual consistency. So, developers and architects should take into account that 
+   there is a delay when data is replicated from master to slave nodes
+
+   Cassandra 
+   In addition to regular eventual consistency, Cassandra supports flexible consistency levels. The client 
+   application identifies to what extent a row of data is up-to-date and how much of it has been 
+   synchronized—compared to other available replicas.
+   On the weakest consistency level, a write operation will be completed if it is accepted by at least one 
+   node. On the level of a replica set, a write operation must be approved by a quorum (the majority of 
+   replica nodes). You can choose among a local quorum, each quorum, and all levels, which would 
+   provide the highest degree of consistency, but the lowest level of availability. So, although 
+   consistency with quorums is supported, there is a performance tradeoff for that.
+4. Fault tolerance
+   Fault tolerance is the ability of a system to continue operating properly in case some of its 
+   components fail. Each of the databases has its own fault tolerance policy.
+
+   MongoDB 
+   In terms of Brewer's CAP theorem, MongoDB is focused on consistency and partition tolerance.
+   MongoDB employs master-slave architecture with failover, which enables a secondary member of the 
+   system to become a primary node, if the current primary node is unavailable. If all of the MongoDB 
+   configuration servers or router processes (mongos) become
+   unavailable, the system stops responding. Compared to the systems  with the peer-to-peer architecture,
+   MongoDB is less faulttolerant.
+
+   Cassandra 
+   Partition tolerance is an integral part of the Cassandra architecture. Basically, the partitioner 
+   determines a node where data should be stored. The partitioner can distribute data evenly across the 
+   cluster based on the MD5 or Murmur3 hash—which is a recommended practice—or keep data 
+   lexically ordered by key bytes. The number of data copies is determined by the replica placement 
+   strategy. In addition, the cluster topology describes distribution of the nodes on racks and specifies 
+   the ideal number of data centers to use the network in a more efficient way.
+   Cassandra has order-preserving or byte-ordering partitioners that operate on partition key bytes 
+   lexicographically. However, they are not recommended for production deployments, since they can 
+   generate hot spots—a situation when some partitions close to each other get more data and activity 
+   than others.
+   Couchbase and Cassandra have architectures with no single point of failure. All nodes are the same 
+   and communicate based on the peer-to-peer principle, where user data is distributed and replicated 
+   among all nodes in the cluster. Replication ensures data accessibility and fault tolerance by storing 
+   copies of data on multiple nodes.
+5. Structure and format
+6. Audit and control   
+7. Configuration management
+8. Backup   
+9. Disaster recovery  
+10. Maintenance    
+11. Recovery    
+12. Monitoring 
+13. Security   
+14. Availability 
+    Availability is the ability to access a cluster, even if a node goes down.
+
+    MongoDB
+    A MongoDB cluster provides high availability using automatic failover. Failover enables a secondary 
+    member of the cluster to turn into a primary node, if the current primary node is unavailable. However, 
+    you will not be able to access the data on that node during the voting phase, which may last for a few 
+    seconds. If you enable reading from secondaries (eventual consistency), you can read data from 
+    them during the voting phase, although you cannot write new data. The failover mechanism does not 
+    require manual intervention. If you use a sharded cluster, Config servers should be located in at least 
+    two different power/network zones.
+    
+    Cassandra    
+    Cassandra appreciates high availability and supports fault tolerance and high availability due to its
+    design. Cassandra uses replication to achieve high availability, so that each row is replicated at N 
+    hosts, where N is the replication factor. Any read/write request for a key gets routed to any node in 
+    the Cassandra cluster; an application developer can specify a custom consistency level for both reads 
+    and writes on a per-operation basis.
+
+    For writes, the system routes requests to the replicas and waits for a specified quorum of replica 
+    nodes to acknowledge the completion of the writes. For reads—based on the consistency guarantees 
+    required by the client—the system either routes requests to the closest replica or routes requests to 
+    all replicas and then waits for a quorum of responses. Additionally for writes, the hinted handoff 
+    mechanism provides absolute write availability at the cost of consistency.
+
+    Notes from a developer’s point of view:
+    High availability is interconnected with replication and consistency settings; therefore, it can be 
+    controlled in the application code. Replication guarantees that row copies are stored on replica nodes. 
+    The number of replicas is specified when a keyspace is created, so you can choose from the replica 
+    placement strategy options. The consistency level refers to how up-to-date and synchronized a row of 
+    data on all of its replica nodes is. For any given read or write operation, a client call specifies the level 
+    of consistency, which determines how many replica nodes must acknowledge the request. This 
+    feature is supported from the Thrift and CQL programming interfaces.
+
+    Notes from an architect’s point of view:
+    Cassandra provides high availability out-of-the-box, since it is implied by its architecture. It works in a 
+    synchronous way with partitioning, replication, and failure handling features to handle read/write 
+    requests.
+
+    Summary
+    Due to automatic failover in MongoDB, data on a failed node becomes unavailable for a few seconds 
+    during the voting phase. Enabling eventual consistency makes it possible to read data from the 
+    replica set. In Couchbase, you cannot write to the failed node until it is failed over (with a minimal 
+    delay of 30 sec). Cassandra was designed for high availability and fault tolerance, so it is definitely 
+    the best data store in this category.
+15. Stability   
+16. Documentation
+17. Integration  
+18. Support   
+19. Usability 
+20. Performance
+    System performance is responsiveness and stability under a particular workload. Workload is 
+    described in terms of read/insert/update/delete proportion and issued throughput in operations per 
+    second. Responsiveness is measured as latency in milliseconds (ms).
+    
+    MongoDB
+    MongoDB may experience performance issues during writes, because it uses a reader-writer block 
+    that allows for concurrent reads, but locks write operations. The main requirement for improving the 
+    performance of MongoDB is using data sets that fit memory.
+    
+    Performance tests for MongoDB were carried out on a replica set that consisted of three members: a 
+    master node and two slaves. One separate node was used as a client.
+    By default, read and write operations of a replica set in MongoDB are sent to the primary node. So, 
+    the results are consistent with the last operation. However, in this case, a primary node becomes a 
+    bottleneck.
+    
+    There are several options for improving performance. For example, a client may be configured with a 
+    read preference, which means that read operations will be firstly directed to the secondary members. 
+    It will dramatically improve read performance. Keep in mind that if you use this setting and allow 
+    clients to read secondary reads, reads can be returned from secondary members that have not been 
+    replicated yet and—therefore—do not contain the most recent updates. This can be caused by a lag 
+    between master and slave nodes.
+    
+    To guarantee consistency for reads from secondary members, you can specify the setting that would 
+    recognize a write operation’s completeness only if it has been succeeded on all of the nodes. In this 
+    case, you will achieve full consistency, but it will lead to slowing down write operations. A test client 
+    we used wrote data only to the primary node and read data from all replicas. It helped us to increase 
+    read/write performance, but this corresponds to the eventual consistency level.
+    One of the main requirements for achieving good MongoDB performance is using working data sets 
+    that fit memory. To map data files to memory, MongoDB uses a memory-mapped file operation 
+    system mechanism. By using memory-mapped files, MongoDB can deal with the contents of its data 
+    files as if they were in memory.
+    
+    MongoDB stores its data in the files called extents with the standard size of 2 GB; however, the 
+    process is actually more complex. Such files are created on demand as the database grows. To 
+    increase efficiency and reduce disk fragmentation, the whole file is pre-allocated. The data files 
+    include files that contain no data, but the space for them has been allocated. For example, MongoDB 
+    can allocate 1 GB to a data file, which may be 90% empty.
+    Actually, stored data has significant overhead compared to the size reserved for documents. This 
+    explains why it is required to allocate more RAM than the actual size of a working set.
+    One more drawback of MongoDB—that affects performance of write operations—is the reader-writer 
+    lock on the database level. The lock allows concurrent reads to access a database, but gives 
+    exclusive access to a single write operation, which significantly reduces the performance of the 
+    solution under write-intensive workloads.
+
+    Cassandra
+    Cassandra is optimized for intensive writes. Key and row caching can greatly accelerate reads when 
+    there are a large number of rows accessed frequently.
+
+    Cassandra behaves as a very effective solution for write-prevailing loads; it delivered an average 
+    performance of less than 1 ms for inserts, updates, and deletes—accompanying it with predictable, 
+    stably growing throughput. Fast updates are empowered by its architecture, where updated data is 
+    simultaneously written to an in-memory structure called Memtable and saved to the transaction 
+    commit log on a disk for persistency.
+
+    Cassandra can also be very responsive under read-intensive workloads. Indeed, it showed a quite 
+    decent throughput of 25 K ops/sec with maximum latency time squeezing into 3–4 ms intervals. 
+    Reads are highly dependent on JVM and garbage collection settings used on the cluster’s nodes, 
+    since garbage collection activities stop the application while it frees up memory and make nodes 
+    become unresponsive during the running time. The column family used for benchmarking was created 
+    with settings that enabled both key cache and off heap cache for row data to lower on-disk pressure 
+    and speed up read latencies. Additionally, we increased the new
+    generation size from its default settings.
+    The bigger the younger generation, the less often minor collections occur and less often the 
+    client experiences garbage collection pauses.
+21. Scalability 
+    Scalability is the ability of a solution to handle a growing amount of data and cluster loads. Here, we 
+    are considering only horizontal scaling (e.g., adding more nodes to the system).
+   
+    MongoDB
+    MongoDB has two scalability options: 
+    a) Focus on read operations by master-slave replication.
+    b) Focus on read and write operations by sharding.
+
+    The first one is a replica set, a group of mongod processes that maintain the same data set and 
+    support master-slave replication. Depending on the settings, a replica set allows for reading from 
+    replicas, but always sends write operations to the master node. By adding more nodes to a replica 
+    set, you can achieve almost linear scalability of read operations, which was proved by our research 
+    and tests. The process of data migration from a master node to the added replica nodes runs 
+    automatically. The process of adding new nodes to a replica set is quite simple and can be done by 
+    running a single command. So, a replica set is the crucial concept for all production deployments.
+    In cases when performance of a replica set is limited by system resources, the performance of the 
+    system may go down dramatically. 
+    
+    Examples of such cases:
+    - High query rates can exhaust the CPU capacity of the server.
+    - Large data sets may exceed the storage capacity of a single machine.
+    - The size of a working data set that is larger than the 
+      system’s RAM imposes an extra load on the I/O capacity of disk drives.
+    
+    One more case of performance degradation is when the system works under a write intensive 
+    workload. MongoDB uses a reader-writer lock on a per-database basis. It allows for concurrent reads,
+    but gives exclusive access to a single write operation. So the reader-writer lock reduces concurrency 
+    of write operations.
+
+    The second one is sharding, the method for storing data across multiple machines or a set of 
+    machines. MongoDB uses sharding for deployments with very large data sets and high write 
+    operation throughput. One needs to deploy an additional replica set and bind it with the existing one 
+    to set up a sharding cluster. Data is split and migrated to the new replica set automatically by an 
+    assigned key. Additionally, a sharded cluster requires deploying three config servers and several 
+    mongos processes. Config servers store cluster metadata information, and mongos processes split 
+    requests between shards using a predefined key.
+    
+    To summarize, deploying a sharded cluster is rather complicated. You should know the data model 
+    and access patterns, as well as run additional commands to make
+    all components of the deployment work together.
+
+    Cassandra
+    Cassandra can provide almost linear scalability. Adding a new node or removing an old node from a
+    cluster requires performing some operations. They can be implemented from the nodetool command 
+    line helper or through the DataStax OpsCenter.
+  
+    Cassandra allows for adding new nodes dynamically, as well as for adding a new data center to the
+    existing cluster. With Cassandra under v1.2, scaling out an existing cluster required a more thorough 
+    understanding of the database architecture and included some manual steps. Such deployments had 
+    one token per node, so a node owned exactly one contiguous range in the ring space. When a new 
+    node was added to a cluster, you were to calculate a new token for a node, re-calculate tokens for the 
+    cluster manually, then assign new tokens to the existing nodes with nodetool, and eventually remove 
+    unused keys on all nodes using nodetool cleanup. Besides that, the initial token property could be left 
+    empty. As a result, the token range of a node that was working under the heaviest load would be split 
+    and a new node would be added.
+    
+    The paradigm described above was changed with the release of Cassandra v1.2, which has virtual 
+    nodes or vnodes, making the legacy manual operations unnecessary. Unlike the previous versions 
+    that had one token or a range of tokens per node, Cassandra v1.2 has many tokens per node. Within 
+    a cluster, vnodes can be selected randomly and be non-contiguous.
+    Vnodes greatly simplified scaling out an existing cluster. You do not have to calculate tokens, assign 
+    them to each of the nodes, and rebalance a cluster. In the updated version of Cassandra, a new node 
+    gets an even portion of the data. To add a new node, the existing
+    cluster should be introduced (you should set a few connections and
+    auto-bootstrap properties). 
+    After that, a Cassandra daemon will start on each of the new
+    nodes.As a final step, you can call nodetool cleanup during low-usage hours 
+    to remove keys that are no longer in use.
+
+    Adding a new node from the OpsCenter GUI is even simpler. You should click Add Node in the cluster 
+    view and provide sudo credentials for authentication.
+    Reducing the cluster size is also straightforward. You can do it from the command line of the nodetool 
+    utility. Firstly, you should run a drain command to stop accepting writes from the client and flush 
+    memtables on a particular remaining node. Secondly, run a decommission command to move data 
+    from the removed nodes to other nodes. Finally, complete removal of the node with the nodetool 
+    removenode operation.
+
+    The scalability tests showed that Cassandra scales out linearly by adding more computing resources. 
+    It performed 46,000 ops/sec on three nodes, up to 56,000 ops/sec on four nodes, up to 61,000 
+    ops/sec on five nodes, and up to 71,000 ops/sec on six nodes.
+    
+    

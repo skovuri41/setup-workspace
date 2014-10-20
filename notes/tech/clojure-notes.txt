@@ -52,6 +52,11 @@ There are seven different primary abstractions in which Clojure’s data structu
 - Futures and Promises
 - 
 
+* Clojure Advanced Concepts
+- core.reducers
+- core.async
+- transducers
+- 
 * Building Abstractions
 - Protocols
 - DataTypes
@@ -59,7 +64,7 @@ There are seven different primary abstractions in which Clojure’s data structu
 - Macros
 - Multimethods
 
-* Clojure DSL 
+* Clojure DSL Programming
 * Java Interop
 * Performance
   - Type Hints
@@ -70,14 +75,10 @@ There are seven different primary abstractions in which Clojure’s data structu
   - 
 * Applied Clojure
 *** Clojure Data Analysis
-
 *** Scaling through Messaging
-
 *** Data Storage with Clojure
 
 *** Clojure and the web
-
-*** 
 * Unit Testing
 * Clojure Cookbook Recipes
 *** General Computing
@@ -87,4 +88,13 @@ There are seven different primary abstractions in which Clojure’s data structu
 *** Distributed Computation
 *** Performance and Production
 *** Web Applications
+* Clojure Libraries
+*** component
+*** clj-time
+*** monger
+*** data.zip, data.xml
+*** cheshire
+*** ring, compojure, liberator, hiccup
+*** incanter
+ 
 
