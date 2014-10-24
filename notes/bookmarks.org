@@ -122,3 +122,8 @@ Article showing various ways to parse and process xml data.
 :CREATED:  2014-10-10
 :CATEGORY:Clojure
 :END:
+* [[http://ergoemacs.org/emacs/emacs_hotkey_open_file_fast.html][emacs-hotkey-open-files by ergomacs]] 
+:PROPERTIES:
+:CREATED:  2014-10-22
+:CATEGORY: emacs
+:END:
