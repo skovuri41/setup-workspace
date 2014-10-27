@@ -93,7 +93,6 @@ Article showing various ways to parse and process xml data.
 :CATEGORY:Clojure
 :END:
 
-
 * http://www.youtube.com/watch?v=NvxyTKyXSRg
 * http://www.youtube.com/watch?v=6mTbuzafcII
 * https://www.youtube.com/watch?v=lKXe3HUG2l4
@@ -111,7 +110,6 @@ Article showing various ways to parse and process xml data.
 
 
 
-
 * [[https://github.com/matthiasn/Clojure-Resources][Clojure Resources on Github]] 
 :PROPERTIES:
 :CREATED:  2014-10-07
@@ -126,4 +124,16 @@ Article showing various ways to parse and process xml data.
 :PROPERTIES:
 :CREATED:  2014-10-22
 :CATEGORY: emacs
-:END:
+:END:      
+* [[http://eigenhombre.com/2014/02/16/dead-simple-one-file-scripts-in-clojure/][Simple One File Scripts in Clojure]] 
+:PROPERTIES: 
+:CREATED:  2014-10-26
+:CATEGORY: Clojure
+:END:      
+* [[http://eigenhombre.com/clojure/2012/11/16/lightning-fast-startup-times-for-clojure-programs/][Drip for Lightning fast startup times for clojure programs]] 
+:PROPERTIES: 
+:CREATED:  2014-10-26
+:CATEGORY: Clojure
+:END:      
+
+

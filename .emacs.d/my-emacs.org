@@ -74,14 +74,9 @@ from *emacs*.
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
-;;(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-;;(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
-;;(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
-
- 
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
+(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
 
 (when (not package-archive-contents)
     (package-refresh-contents))
@@ -142,7 +137,15 @@ from *emacs*.
   zenburn-theme 
   drag-stuff 
   inf-mongo 
-  bookmark+
+  bookmark+ 
+  multiple-cursors
+  magit
+  git-blame
+  git-commit-mode
+  git-gutter-fringe
+  git-messenger
+  gitconfig-mode
+  gitignore-mode
   )
  
  "A list of packages to ensure
@@ -234,6 +237,7 @@ Disk space is cheap. Save lots.
 (setq find-file-visit-truename t)
 
 (setq bookmark-default-file  (concat user-emacs-directory "bookmarks"))
+(require 'uniquify)
 
 #+END_SRC
 ******* Default Settings
@@ -254,7 +258,9 @@ tab-width is a variable defined in `C source code'.
 Automatically becomes buffer-local when set.
 #+END_QUOTE
 Whenever they are set the value becomes buffer-local.
-To be able to set such a variable globally we have to use =setq-default= which modifies the default value of the variable.
+To be able to set such a variable globally we have to use
+=setq-default= which modifies the default value of the variable.
+
 ******* Global Modes
 #+BEGIN_SRC emacs-lisp
 
@@ -287,7 +293,14 @@ want to type a full word to answer a question from Emacs,
 yet Emacs imposes that silly behavior on us. No!
 Also Emacs should be able to kill processes without asking which is
 achieved in the second expression. 
-
+******* Starting Emacs with Bookmark
+#+begin_src emacs-lisp :tangle no
+(setq inhibit-splash-screen t)
+;;(require 'bookmark)
+(require 'bookmark+)
+(bookmark-bmenu-list)
+(switch-to-buffer "*Bookmark List*")
+#+end_src
 ***** Themes,Faces,Frame
 
 #+BEGIN_SRC emacs-lisp
@@ -804,7 +817,7 @@ minor mode, you can add to it with this magic:
  ;(setq cider-repl-popup-stacktraces t)
 
  ;;To auto-select the error buffer when it's displayed:
- (setq cider-auto-select-error-buffer t)
+ (setq cider-auto-select-error-buffer nil)
 
  ;;The REPL buffer name has the format *cider-repl project-name*.
  ;;Change the separator from space to something else by overriding nrepl-buffer-name-separator.
@@ -881,6 +894,38 @@ may want to put  auto-complete into your completion-at-point-functions:
 (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
 
 #+END_SRC
+
+#+begin_src emacs-lisp :tangle yes
+(defun cider-eval-last-sexp-and-append ()
+  "Evaluate the expression preceding point and append result."
+  (interactive)
+  (let* ((last-sexp (if (region-active-p)
+                       (buffer-substring (region-beginning) (region-end))
+                     (cider-last-sexp)))
+         (last-results (cider-eval-and-get-value last-sexp)))
+
+    (with-current-buffer (current-buffer)
+      (comment-indent)
+      (insert " => ")
+      (insert (prin1-to-string last-results)))))
+
+(defun cider-send-and-evaluate-sexp ()
+   "Sends the s-expression located before the point or the active
+region to the REPL and evaluates it. Then the Clojure buffer is
+activated as if nothing happened."
+   (interactive)
+   (if (not (region-active-p))
+       (cider-insert-last-sexp-in-repl)
+     (cider-insert-in-repl
+      (buffer-substring (region-beginning) (region-end)) nil))
+   (cider-switch-to-repl-buffer)
+   (cider-repl-closing-return)
+   (cider-switch-to-last-clojure-buffer)
+   (message ""))
+
+
+#+end_src
+
 ***** clojure-mode 
 #+BEGIN_SRC emacs-lisp
 ;;(require 'subword-mode)
@@ -992,7 +1037,7 @@ tags.
 #+END_SRC
 ***** diminish
 #+BEGIN_SRC emacs-lisp
-;; Diminish modeline clutter
+;; diminish modeline clutter
 (require 'diminish)
 (eval-after-load "yasnippet" '(diminish 'yas-minor-mode)) 
 (eval-after-load "guide-key" '(diminish 'guide-key-mode))
@@ -1004,6 +1049,7 @@ tags.
 (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
 (eval-after-load "helm-mode" '(diminish 'helm-mode))
 (eval-after-load "workgroups" '(diminish 'workgroups-mode))
+(eval-after-load "drag-stuff" '(diminish 'drag-stuff-mode))
 
 #+END_SRC
 ***** drag-stuff
@@ -1235,13 +1281,80 @@ Github: https://github.com/joshwnj/json-mode
 #+end_src
 ***** magit
 #+begin_src emacs-lisp
-(use-package magit
-  :init (setq magit-diff-options '("-b")) ; ignore whitespace
-  :bind ("C-x v d" . magit-status))
+ (require 'magit)
+
 #+end_src
+ I like having Magit to run in a /full screen/ mode, and took this
+   =defadvice= idea from [[https://github.com/magnars/.emacs.d/blob/master/setup-magit.el][Sven Magnars]]:
+
+#+BEGIN_SRC elisp
+(defadvice magit-status (around magit-fullscreen activate)
+  (window-configuration-to-register :magit-fullscreen)
+  ad-do-it
+  (delete-other-windows))
+#+END_SRC
+ Now, we have to have the =q= command recover the window session
+ that was stored in a window register:
+
+#+BEGIN_SRC elisp
+(defun magit-quit-session ()
+  "Restores the previous window configuration and kills the magit buffer"
+  (interactive)
+  (kill-buffer)
+  (jump-to-register :magit-fullscreen))
+
+(define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+#+END_SRC
+I install and use the [[https://github.com/syohex/emacs-git-gutter-fringe][Git Gutter Fringe]] as it works better with
+windowing versions of Emacs.
+
+#+BEGIN_SRC elisp
+(if (autofeaturep 'git-gutter-fringe)
+    (when (window-system)
+        (require 'git-gutter-fringe)
+        (global-git-gutter-mode +1)
+        (setq-default indicate-buffer-boundaries 'left)
+        (setq-default indicate-empty-lines +1)))
+#+END_SRC
+Git blame makes the history of a buffer pretty obvious... maybe a
+tad too obvious.
+Git Messenger shows the blame line as a popup.
+
+#+BEGIN_SRC elisp
+(when (autofeaturep 'git-blame)
+  ;; (require 'git-blame)
+  (autoload 'git-blame-mode "git-blame"
+           "Minor mode for incremental blame for Git." t))
+
+(when (autofeaturep 'git-messenger)
+  (require 'git-messenger)
+  (global-set-key (kbd "C-x v p") 'git-messenger:popup-message))
+#+END_SRC
+ Perhaps we can do Github pull requests from within Emacs, after
+ reading [[http://endlessparentheses.com/merging-github-pull-requests-from-emacs.html][this blog entry]].
+
+#+BEGIN_SRC elisp
+(when (autofeaturep 'magit-gh-pulls-mode)
+  (eval-after-load 'magit
+    '(define-key magit-mode-map "#gg"
+       (defun endless/load-gh-pulls-mode ()
+         "Start `magit-gh-pulls-mode' only after a manual request."
+         (interactive)
+         (require 'magit-gh-pulls)
+         (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+         (magit-gh-pulls-mode 1)
+         (magit-gh-pulls-reload)))))
+#+END_SRC
 ***** moe-theme
 ***** move-text
 ***** multiple-cursors
+#+begin_src emacs-lisp :tangle yes
+
+(require 'multiple-cursors)
+(setq mc/list-file "~/.emacs.d/.mc-lists.el")
+
+
+#+end_src
 ***** org-bullets
 #+BEGIN_SRC emacs-lisp
 (require 'org-bullets)
@@ -1648,11 +1761,13 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (windmove-default-keybindings) ;; Shift+direction
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1))) ;; back one
 (global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
+
+(global-set-key (kbd "M-o")  'other-window)
 ;;; Ace Jump
 (define-prefix-command 'ace-jump-map)
 (global-set-key (kbd "M-j") 'ace-jump-map)
 (define-key ace-jump-map (kbd "SPC") 'ace-jump-mode)
-;;;;; Jump Char
+ ;;;;; Jump Char
 (define-key ace-jump-map (kbd "f" ) 'jump-char-forward)
 (define-key ace-jump-map (kbd "b" ) 'jump-char-backward)
 
@@ -1681,7 +1796,7 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key [C-next] 'next-buffer)
 
 ;; Open Emacs config dir
-(global-set-key (kbd "C-c e") 'open-my-config-dir)
+;;(global-set-key (kbd "C-c e") 'open-my-config-dir)
 
 ; Quick keyboard macros with F1 (http://www.emacswiki.org/emacs/KeyboardMacros)
 (global-set-key '[(f1)]          'call-last-kbd-macro)
@@ -1691,7 +1806,7 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key (kbd "C-c d") 'desktop-session-restore)
 (global-set-key (kbd "C-c D") 'desktop-session-save)
 
-(global-set-key (kbd "M-j") 'join-lines)
+(global-set-key (kbd "M-J") 'join-lines)
 (global-set-key (kbd "C-c o") 'open-line-below)
 (global-set-key (kbd "C-c O") 'open-line-above)
 (global-set-key "\C-c\C-k" 'copy-line)
@@ -1715,13 +1830,34 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key (kbd "C-c l")  (quote copy-line))
 (global-set-key (kbd "C-c h")  (quote copy-paragraph))
 
+;;multiple cursors
 
+;;When you have an active region that spans multiple lines, 
+;;the following will add a cursor to each line:
+
+(global-set-key (kbd "C-c e") 'mc/edit-lines)
+
+;;When you want to add multiple cursors not based on continuous lines, 
+;;but based on keywords in the buffer, use:
+
+(global-set-key (kbd "C-c n") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-c b") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c z") 'mc/mark-all-like-this)
+
+(add-hook 'clojure-mode-hook
+          (lambda ()
+            (local-set-key (kbd "M-e") 'forward-sexp)
+            (local-set-key (kbd "M-a") 'backward-sexp)
+            (local-set-key (kbd "C-c C-v") 'cider-eval-last-sexp-and-append)
+            (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
+;;magit
+ (global-set-key (kbd "M-C-g") 'magit-status)
+ ;;(global-set-key (kbd "<f9> g") 'magit-status)
 #+END_SRC
 
 * Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
 *** DONE goto-linum remap keybinding not working
-*** TODO flyspell missing
 *** TODO configure cider and lein, version 0.8 not working yet.
 *** TODO configure helm and projectile key bindings
 *** IN-PROGRESS cider newer version not working, missing package queue
@@ -1732,14 +1868,8 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 *** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
 *** TODO emacs etags, usage study
 *** TODO emacs start maximized disabled, revisit
-*** TODO multiple cursors
+*** IN-PROGRESS multiple cursors
 *** DONE undo tree        
-
-
-
-
-
-
 
 
 
