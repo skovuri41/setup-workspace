@@ -1401,7 +1401,7 @@ Additional bullets from [[http://nadeausoftware.com/articles/2007/11/latency_fri
      ("\\.pdf\\'" . system)))))
 (add-hook 'org-mode-hook 'set-org-mode-app-defaults)
 
-(setq org-export-html-postamble nil)
+(setq org-html-postamble nil)
 
 ;; Let's have pretty source code blocks
 (setq org-edit-src-content-indentation 0
