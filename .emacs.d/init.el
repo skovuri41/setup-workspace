@@ -2,6 +2,7 @@
 (package-initialize nil)
 ;; Override the packages with the git version of Org and other packages
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/lisp")
+(setq org-ditaa-jar-path "~/.emacs.d/elisp/org-mode/contrib/scripts/ditaa.jar")
 
 ;; Load the rest of the packages
 (package-initialize t)
@@ -12,6 +13,7 @@
 (require 'ob-tangle)
 (require 'ob-clojure)
 (require 'cl)
+(require 'ob-ditaa)
 
 (setq my-emacs-directory (file-name-directory (file-truename load-file-name)))
 (org-babel-load-file (expand-file-name "my-emacs.org" my-emacs-directory))
@@ -27,7 +29,9 @@
    (python     . t)
    (dot        . t)
    (css        . t)
-   (plantuml   . t)))
+   (plantuml   . t)
+   (ditaa . t)))
+
 (setq org-confirm-babel-evaluate nil)
 
 (custom-set-variables
@@ -35,6 +39,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(org-bullets-bullet-list (quote ("●" "○" "►" "✿"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
