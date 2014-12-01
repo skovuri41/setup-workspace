@@ -7,6 +7,9 @@
 ;; Load the rest of the packages
 (package-initialize t)
 (setq package-enable-at-startup nil)
+(defface org-block-background
+       '((t (:background "#474747")))
+       "Face used for the source block background.")
 
 (require 'org)
 (require 'ob)

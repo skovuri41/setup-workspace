@@ -67,6 +67,11 @@
   19.Kill word M -d
   20.Kill line C-k
 
+* Editing
+C-j	New line and indent, equivalent to "enter" followed by "tab"
+M-/	Hippie expand, cycles through possible expansions of the text before point
+M-\	Delete all spaces and tabs around point. I use this one a lot
+
 * Reading and Writing files		   
 ;;;;;;; reading and writing files
   1. C-x C-f - find a file, create a new buffer

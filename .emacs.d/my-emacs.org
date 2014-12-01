@@ -69,14 +69,14 @@ from *emacs*.
 ***** Packages
 #+BEGIN_SRC emacs-lisp
 
-(setq package-archives nil)
+;;(setq package-archives nil)
 ;;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
-(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
-(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
+;;(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+;;(add-to-list 'package-pinned-packages '(ac-cider . "melpa-stable") t) 
+;;(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t) 
 
 (when (not package-archive-contents)
     (package-refresh-contents))
@@ -1245,7 +1245,7 @@ occurrences edited in the same way, with visual feedback as you type.
 (setq iedit-unmatched-lines-invisible-default t)
 #+END_SRC
 ***** inf-mongo
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (require 'inf-mongo)
 (setq inf-mongo-command "C://Program Files//MongoDB 2.6 Standard//bin//mongo.exe 127.0.0.1:27018")
 #+end_src
@@ -1508,6 +1508,22 @@ A couple of short-cut keys to make it easier to edit text.
     (interactive)
     (surround-text "="))
 #+END_SRC
+
+******* org-crypt
+#+begin_src emacs-lisp :tangle yes
+
+(require 'org-crypt)
+; Encrypt all entries before saving
+(org-crypt-use-before-save-magic)
+(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+; GPG key to use for encryption
+(setq org-crypt-key "975EEA0A")
+(setq org-crypt-disable-auto-save nil)
+
+#+end_src
+
+[[http://www.gpg4win.org/download.html][SoftwareGPG for Windows ]]
+
 ***** pkg-info
 ***** projectile
 #+BEGIN_SRC emacs-lisp
