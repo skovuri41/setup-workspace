@@ -1627,9 +1627,9 @@ Github: https://github.com/Fuco1/smartparens
 (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
 (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
 
-(define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+(define-key sp-keymap (kbd "C-S-k") 'sp-kill-sexp)
 ;;-backward kill
-(define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+(define-key sp-keymap (kbd "C-S-w") 'sp-copy-sexp)
 ;;-backward copy
 
 (define-key sp-keymap (kbd "M-S-<backspace>") 'sp-unwrap-sexp)
