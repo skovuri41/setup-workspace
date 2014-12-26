@@ -98,6 +98,7 @@ from *emacs*.
   buffer-move
   ace-jump-mode
   ace-jump-buffer
+  ace-window 
   jump-char
   deft
   clojure-mode
@@ -128,6 +129,7 @@ from *emacs*.
   smart-mode-line 
   undo-tree
   workgroups
+  workgroups2
   clojure-cheatsheet
   helm-orgcard
   4clojure 
@@ -779,6 +781,11 @@ minor mode, you can add to it with this magic:
   (dolist (m '(python-mode js2-mode clojure-mode))
     (add-to-list 'ac-modes m))
 #+END_SRC
+***** ace-window
+#+begin_src emacs-lisp :tangle yes
+(require 'ace-window)
+
+#+end_src
 ***** bookmark+
 #+begin_src emacs-lisp :tangle yes
 (require 'bookmark+)
@@ -1049,6 +1056,7 @@ tags.
 (eval-after-load "eldoc" '(diminish 'eldoc-mode))
 (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
 (eval-after-load "helm-mode" '(diminish 'helm-mode))
+;;(eval-after-load "workgroups2" '(diminish 'wg-mode))
 (eval-after-load "workgroups" '(diminish 'workgroups-mode))
 (eval-after-load "drag-stuff" '(diminish 'drag-stuff-mode))
 
@@ -1571,7 +1579,7 @@ is enabled by default whenever native indexing is enabled.
 #+END_SRC
 
 ***** rainbow-mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (require 'rainbow-delimiters)
 (dolist (hook '(css-mode-hook
                 html-mode-hook
@@ -1726,10 +1734,11 @@ desktop-save-mode on.
 ***** workgroups
 https://github.com/tlh/workgroups.el
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 
 (require 'workgroups)
 (workgroups-mode 1)
+;;(setq wg-prefix-key (kbd "C-c w"))
 ;;(wg-load "/path/to/saved/workgroups")
 
 #+END_SRC
@@ -1759,7 +1768,11 @@ Saving and loading was the original motivation for writing
 Workgroups. You can save your workgroups to a file with <prefix> C-s
 (wg-save) and you can load workgroups from a file with <prefix> C-l
 (wg-load).
-
+***** workgroups2
+#+begin_src emacs-lisp :tangle no
+(require 'workgroups2)
+(workgroups-mode 1)
+#+end_src
 ***** yasnippet
 ******* Installation
  #+BEGIN_SRC emacs-lisp
@@ -1817,7 +1830,8 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
  ;;;;; Jump Char
 (define-key ace-jump-map (kbd "f" ) 'jump-char-forward)
 (define-key ace-jump-map (kbd "b" ) 'jump-char-backward)
-
+;; ace window
+(global-set-key (kbd "M-p")  'ace-window)
 ;;(global-set-key [(meta m)] 'jump-char-forward)
 ;;(global-set-key [(shift meta m)] 'jump-char-backward)
 
