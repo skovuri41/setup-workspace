@@ -639,96 +639,6 @@ See also: `xah-copy-to-register-1', `insert-register'."
 
 #+end_src
 
-***** Copy the word,line,paragraph,string and parenthesis.
-
-#+begin_src emacs-lisp :tangle yes
-
-(defun get-point (symbol &optional arg)
-      "get the point"
-      (funcall symbol arg)
-      (point))
-     
-(defun copy-thing (begin-of-thing end-of-thing &optional arg)
-       "copy thing between beg & end into kill ring"
-        (save-excursion
-          (let ((beg (get-point begin-of-thing 1))
-             (end (get-point end-of-thing arg)))
-            (copy-region-as-kill beg end))))
-     
-(defun paste-to-mark(&optional arg)
-       "Paste things to mark, or to the prompt in shell-mode"
-       (let ((pasteMe 
-         (lambda()
-           (if (string= "shell-mode" major-mode)
-             (progn (comint-next-prompt 25535) (yank))
-           (progn (goto-char (mark)) (yank) )))))
-        (if arg
-            (if (= arg 1)
-            nil
-              (funcall pasteMe))
-          (funcall pasteMe))))
-(defun copy-word (&optional arg)
-      "Copy words at point into kill-ring"
-       (interactive "P")
-       (copy-thing 'backward-word 'forward-word arg)
-       ;;(paste-to-mark arg)
-     )
-
-(defun copy-line (&optional arg)
-      "Save current line into Kill-Ring without mark the line "
-       (interactive "P")
-       (copy-thing 'beginning-of-line 'end-of-line arg)
-       ;;(paste-to-mark arg)
-     )
-
-(defun copy-paragraph (&optional arg)
-      "Copy paragraphes at point"
-       (interactive "P")
-       (copy-thing 'backward-paragraph 'forward-paragraph arg)
-       ;;(paste-to-mark arg)
-     )
-
-(defun beginning-of-string(&optional arg)
-       "  "
-       (re-search-backward "[ \t]" (line-beginning-position) 3 1)
-             (if (looking-at "[\t ]")  (goto-char (+ (point) 1)) )
-)
-(defun end-of-string(&optional arg)
-       " "
-       (re-search-forward "[ \t]" (line-end-position) 3 arg)
-             (if (looking-back "[\t ]") (goto-char (- (point) 1)) )
- )
-     
-(defun thing-copy-string-to-mark(&optional arg)
-       " Try to copy a string and paste it to the mark
-     When used in shell-mode, it will paste string on shell prompt by default "
-       (interactive "P")
-       (copy-thing 'beginning-of-string 'end-of-string arg)
-       ;;(paste-to-mark arg)
-     )
-
-(defun beginning-of-parenthesis(&optional arg)
-       "  "
-       (re-search-backward "[[<(?\"]" (line-beginning-position) 3 1)
-             (if (looking-at "[[<(?\"]")  (goto-char (+ (point) 1)) )
-     )
-(defun end-of-parenthesis(&optional arg)
-       " "
-       (re-search-forward "[]>)?\"]" (line-end-position) 3 arg)
-             (if (looking-back "[]>)?\"]") (goto-char (- (point) 1)) )
-     )
-     
-(defun thing-copy-parenthesis-to-mark(&optional arg)
-       " Try to copy a parenthesis and paste it to the mark
-     When used in shell-mode, it will paste parenthesis on shell prompt by default "
-       (interactive "P")
-       (copy-thing 'beginning-of-parenthesis 'end-of-parenthesis arg)
-       ;;(paste-to-mark arg)
-     )
-
-
-#+end_src
-
 ***** emacs swtich next prev user buffer - xah
 #+begin_src emacs-lisp :tangle yes
 (defvar xah-switch-buffer-ignore-dired t "If t, ignore dired buffer when calling `xah-next-user-buffer' or `xah-previous-user-buffer'")
@@ -1001,7 +911,7 @@ activated as if nothing happened."
 (require 'clojure-mode)
 ;;(require 'clojure-mode-extra-font-locking)
 (add-hook 'clojure-mode-hook 'subword-mode)
-;;(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 (add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
 #+END_SRC
@@ -1249,7 +1159,7 @@ You might want to checkout the [[https://github.com/emacs-helm/helm/wiki][Helm W
 #+BEGIN_SRC emacs-lisp
 (require 'helm-swoop)
 
-;; ;; Change keybinds to whatever you like :)
+;; ;; Change keybinds to whatever you like 
 (global-set-key (kbd "M-i") 'helm-swoop)
 (global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
 (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
@@ -1640,18 +1550,18 @@ is enabled by default whenever native indexing is enabled.
 #+END_SRC
 
 ***** rainbow-mode
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
 (require 'rainbow-delimiters)
 (dolist (hook '(css-mode-hook
                 html-mode-hook
                 js-mode-hook
                 emacs-lisp-mode-hook
-                org-mode-hook
                 text-mode-hook 
                 cider-repl-mode-hook
                 clojure-mode-hook
                 ))
   (add-hook hook 'rainbow-delimiters-mode))
+
 #+END_SRC
 ***** recentf
 #+BEGIN_QUOTE
@@ -1945,13 +1855,6 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key "\C-cj" 'org-journal-entry)
 (define-key global-map "\C-cc" 'org-capture)
 
-;;copy
-(global-set-key (kbd "C-c a")  (quote thing-copy-parenthesis-to-mark))
-(global-set-key (kbd "C-c s")  (quote thing-copy-string-to-mark))
-(global-set-key (kbd "C-c w")  (quote copy-word))
-(global-set-key (kbd "C-c l")  (quote copy-line))
-(global-set-key (kbd "C-c h")  (quote copy-paragraph))
-
 ;;multiple cursors
 
 ;;When you have an active region that spans multiple lines, 
@@ -1988,16 +1891,16 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 * Work Items                                                          :emacs:
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
 *** DONE goto-linum remap keybinding not working
-*** TODO configure cider and lein, version 0.8 not working yet.
-*** TODO configure helm and projectile key bindings
-*** IN-PROGRESS cider newer version not working, missing package queue
+*** DONE configure cider and lein, version 0.8 not working yet.
+*** DONE cider newer version not working, missing package queue
+*** DONE configure helm and projectile key bindings
 *** TODO work on copy rectangle emacs-lisp script
 *** TODO ido m-x mode and helm m-x mode , compare and research
 *** TODO clj-refactor, cljdoc configuration
 *** TODO Color Identifiers Mode
 *** IN-PROGRESS checkout yasnippet, setup clojure yasnippet, org-capture yasnippet for links, compare with abbreva + skeleton available in emacs by default.
 *** TODO emacs etags, usage study
-*** TODO emacs start maximized disabled, revisit
+*** DONE emacs start maximized disabled, revisit
 *** IN-PROGRESS multiple cursors
 *** DONE undo tree        
 
