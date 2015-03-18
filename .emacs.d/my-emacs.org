@@ -1602,7 +1602,7 @@ You can customize the number of recent files displayed, the location of the menu
 (setq recentf-save-file (expand-file-name "~/.recentf"))
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
-(global-set-key (kbd "C-x C-r") 'recentf-open-files)
+
 #+END_SRC
 ***** rich-minority
 ***** savehist
@@ -1918,6 +1918,10 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 (global-set-key (kbd "M-`") 'helm-all-mark-rings)
 (global-set-key (kbd "C-`") 'push-mark-no-activate)
+
+;;(global-set-key (kbd "C-x C-r") 'recentf-open-files)
+(global-set-key (kbd "C-x C-r") 'helm-recentf)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 #+END_SRC
 
 * Work Items                                                          :emacs:
