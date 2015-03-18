@@ -639,7 +639,7 @@ See also: `xah-copy-to-register-1', `insert-register'."
 
 #+end_src
 
-***** emacs swtich next prev user buffer - xah
+***** emacs switch next prev user buffer - xah
 #+begin_src emacs-lisp :tangle yes
 (defvar xah-switch-buffer-ignore-dired t "If t, ignore dired buffer when calling `xah-next-user-buffer' or `xah-previous-user-buffer'")
 (setq xah-switch-buffer-ignore-dired t)
@@ -700,6 +700,33 @@ If `xah-switch-buffer-ignore-dired' is true, also skip directory buffer.
     (while (and (not (string-equal "*" (substring (buffer-name) 0 1))) (< i 20))
       (setq i (1+ i)) (previous-buffer))))
 #+end_src
+
+***** mark commands in transient mark mode
+#+begin_src emacs-lisp :tangle yes
+;; masteringemacs.org fixing mark commands tmm
+(defun push-mark-no-activate ()
+  "Pushes `point' to `mark-ring' and does not activate the region
+   Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
+  (interactive)
+  (push-mark (point) t nil)
+  (message "Pushed mark to ring"))
+
+(defun jump-to-mark ()
+  "Jumps to the local mark, respecting the `mark-ring' order.
+  This is the same as using \\[set-mark-command] with the prefix argument."
+  (interactive)
+  (set-mark-command 1))
+
+(defun exchange-point-and-mark-no-activate ()
+  "Identical to \\[exchange-point-and-mark] but will not activate the region."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark nil))
+#+end_src
+
+#+RESULTS:
+: exchange-point-and-mark-no-activate
+
 *** Advices
 
 #+BEGIN_SRC emacs-lisp
@@ -1614,6 +1641,8 @@ Github: https://github.com/Fuco1/smartparens
 #+BEGIN_SRC emacs-lisp
 (require 'smartparens)
 (require 'smartparens-config)
+;;(push 'org-mode sp-ignore-modes-list)
+(add-to-list 'sp-ignore-modes-list  'Org )
 (smartparens-global-mode t)
 ;; highlights matching pairs
 (show-smartparens-global-mode t) 
@@ -1876,7 +1905,7 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
             (local-set-key (kbd "C-c C-v") 'cider-eval-last-sexp-and-append)
             (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
 ;;magit
- (global-set-key (kbd "M-C-g") 'magit-status)
+(global-set-key (kbd "M-C-g") 'magit-status)
  ;;(global-set-key (kbd "<f9> g") 'magit-status)
 
 ;;switch prev nex user buffers
@@ -1886,6 +1915,9 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 (global-set-key (kbd "<S-f11>") 'xah-previous-emacs-buffer)
 (global-set-key (kbd "<S-f12>") 'xah-next-emacs-buffer)
 
+(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+(global-set-key (kbd "M-`") 'helm-all-mark-rings)
+(global-set-key (kbd "C-`") 'push-mark-no-activate)
 #+END_SRC
 
 * Work Items                                                          :emacs:
