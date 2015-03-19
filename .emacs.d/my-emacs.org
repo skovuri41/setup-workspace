@@ -724,9 +724,6 @@ If `xah-switch-buffer-ignore-dired' is true, also skip directory buffer.
   (deactivate-mark nil))
 #+end_src
 
-#+RESULTS:
-: exchange-point-and-mark-no-activate
-
 *** Advices
 
 #+BEGIN_SRC emacs-lisp
