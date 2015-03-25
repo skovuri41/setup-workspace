@@ -1,6 +1,5 @@
 * Configuration
 *** About this file
-
 My emacs configuration based on org-mode literate programming style.
 ***** Credits
 ******* [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua]]
@@ -148,7 +147,10 @@ from *emacs*.
   git-messenger
   gitconfig-mode
   gitignore-mode
-  htmlize
+  htmlize 
+  page-break-lines 
+  direx 
+  popwin
   )
  
  "A list of packages to ensure
@@ -555,7 +557,7 @@ This function allows to get two vertically splitted windows into a horizontal sp
                     (volatile)
                     (headline "^[;(]")))))
 #+END_SRC
-***** Reindent the whole buffer
+***** reindent the whole buffer
 #+BEGIN_SRC emacs-lisp
 (defun reindent-whole-buffer ()
   "Reindent the whole buffer."
@@ -702,6 +704,7 @@ If `xah-switch-buffer-ignore-dired' is true, also skip directory buffer.
 #+end_src
 
 ***** mark commands in transient mark mode
+
 #+begin_src emacs-lisp :tangle yes
 ;; masteringemacs.org fixing mark commands tmm
 (defun push-mark-no-activate ()
@@ -723,9 +726,58 @@ If `xah-switch-buffer-ignore-dired' is true, also skip directory buffer.
   (exchange-point-and-mark)
   (deactivate-mark nil))
 #+end_src
+
 
+***** commands to navigate brackets, blocks and quote - xah 
+
+#+begin_src emacs-lisp :tangle yes
+(defvar xah-left-brackets nil "List of open bracket chars.")
+(setq xah-left-brackets '("(" "{" "[" "<" "〔" "【" "〖" "〈" "《" "「" "『" "“" "‘" "‹" "«" "（"))
+
+(defvar xah-right-brackets nil "list of close bracket chars.")
+(setq xah-right-brackets '(")" "]" "}" ">" "〕" "】" "〗" "〉" "》" "」" "』" "”" "’" "›" "»" "）"))
+
+(defun xah-backward-left-bracket ()
+  "Move cursor to the previous occurrence of left bracket.
+The list of brackets to jump to is defined by `xah-left-brackets'.
+URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
+Version 2015-03-24"
+  (interactive)
+  (search-backward-regexp (eval-when-compile (regexp-opt xah-left-brackets)) nil t))
+
+(defun xah-forward-right-bracket ()
+  "Move cursor to the next occurrence of right bracket.
+The list of brackets to jump to is defined by `xah-right-brackets'.
+URL `http://ergoemacs.org/emacs/emacs_navigating_keys_for_brackets.html'
+Version 2015-03-24"
+  (interactive)
+  (search-forward-regexp (eval-when-compile (regexp-opt xah-right-brackets)) nil t))
+
+(defun xah-forward-block (&optional φn)
+  "Move cursor forward to the beginning of next text block.
+A text block is separated by blank lines.
+In most major modes, this is similar to `forward-paragraph', but this command's behavior is the same regardless of syntax table."
+  (interactive "p")
+  (let ((φn (if (null φn) 1 φn)))
+    (search-forward-regexp "\n[\t\n ]*\n+" nil "NOERROR" φn)))
+
+(defun xah-backward-block (&optional φn)
+  "Move cursor backward to previous text block.
+See: `xah-forward-block'"
+  (interactive "p")
+  (let ((φn (if (null φn) 1 φn))
+        (ξi 1))
+    (while (<= ξi φn)
+      (if (search-backward-regexp "\n[\t\n ]*\n+" nil "NOERROR")
+          (progn (skip-chars-backward "\n\t "))
+        (progn (goto-char (point-min))
+               (setq ξi φn)))
+      (setq ξi (1+ ξi)))))
+
+#+end_src
+
 *** Advices
-
+
 #+BEGIN_SRC emacs-lisp
 (defadvice kill-ring-save (before slick-copy activate compile)
   "When called interactively with no active region, copy a single
@@ -744,6 +796,7 @@ line instead."
       (list (line-beginning-position)
         (line-beginning-position 2)))))
 #+END_SRC
+
 *** Modes
 ***** ace-jump-buffer
 ***** ace-jump-mode
@@ -1054,8 +1107,17 @@ tags.
 ;;(eval-after-load "workgroups2" '(diminish 'wg-mode))
 (eval-after-load "workgroups" '(diminish 'workgroups-mode))
 (eval-after-load "drag-stuff" '(diminish 'drag-stuff-mode))
+(eval-after-load "page-break-lines" '(diminish 'page-break-lines-mode))
 
 #+END_SRC
+***** direx
+#+begin_src emacs-lisp :tangle yes
+(require 'direx)
+;;(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory)
+(push '(direx:direx-mode :position left :width 40 :dedicated t)
+      popwin:special-display-config)
+(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory-other-window)
+#+end_src
 ***** drag-stuff
 #+begin_src emacs-lisp :tangle yes
 (require 'drag-stuff)
@@ -1556,7 +1618,31 @@ A couple of short-cut keys to make it easier to edit text.
 
 [[http://www.gpg4win.org/download.html][SoftwareGPG for Windows ]]
 
+***** page-break-lines
+#+begin_src emacs-lisp :tangle yes
+(require 'page-break-lines)
+(setq page-break-lines-modes
+          '(emacs-lisp-mode
+            lisp-mode
+            scheme-mode
+            compilation-mode
+            outline-mode
+            help-mode
+            text-mode 
+            clojure-mode
+            Org))
+ (global-page-break-lines-mode)
+#+end_src
+
 ***** pkg-info
+***** popwin
+#+begin_src emacs-lisp :tangle yes
+(require 'popwin)
+(popwin-mode 1)
+;;(setq display-buffer-function 'popwin:display-buffer)
+;;(push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
+;;(push '("^\*helm-.+\*$" :regexp t) popwin:special-display-config)
+#+end_src
 ***** projectile
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
@@ -1797,7 +1883,12 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
   (yas-activate-extra-mode 'css-mode) ))
 #+END_SRC
 ***** zoom-frm
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+
 *** Key Bindings
+
 #+BEGIN_SRC emacs-lisp
 ;; Use regex searches by default.
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -1919,9 +2010,22 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 ;;(global-set-key (kbd "C-x C-r") 'recentf-open-files)
 (global-set-key (kbd "C-x C-r") 'helm-recentf)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-#+END_SRC
 
+;; keys for moving to prev/next code section (Form Feed; ^L)
+;; form feed ^L by C-q then C-l
+(global-set-key (kbd "<C-M-prior>") 'backward-page) ; Ctrl+Alt+PageUp
+(global-set-key (kbd "<C-M-next>") 'forward-page)   ; Ctrl+Alt+PageDown
+
+(global-set-key (kbd "<home>") 'xah-backward-left-bracket)
+(global-set-key (kbd "<end>") 'xah-forward-right-bracket)
+
+(global-set-key (kbd "<prior>") 'xah-backward-block) ; page up key
+(global-set-key (kbd "<next>") 'xah-forward-block) ; page down key
+
+#+END_SRC
+
 * Work Items                                                          :emacs:
+
 *** TODO text-increase and text-decrease conflict with smartparen key bindings
 *** DONE goto-linum remap keybinding not working
 *** DONE configure cider and lein, version 0.8 not working yet.
@@ -1935,10 +2039,4 @@ Workgroups. You can save your workgroups to a file with <prefix> C-s
 *** TODO emacs etags, usage study
 *** DONE emacs start maximized disabled, revisit
 *** IN-PROGRESS multiple cursors
-*** DONE undo tree        
-
-
-
-
-
-
+*** DONE undo tree
