@@ -314,7 +314,9 @@ Each buffer has its own mark ring. All editing commands use the current buffer's
      - S-right -> M-+
      - S-left -> M--
   2.(setq org-return-follows-link t) follow link with Ret.
-  3. 
+  
+*** Header with css style
+//#+HTML_HEAD: <style>pre.src {background-color: #303030; color: #e5e5e5;}</style> 
      
 * TODO Calculator
  - calc
