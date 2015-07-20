@@ -800,11 +800,11 @@ See: `xah-forward-block'"
   "Insert custom inline css"
   (when (eq exporter 'html)
     (let ((my-pre-bg (face-background 'default)))
-      (setq org-html-head-include-default-style nil)
+      ;;(setq org-html-head-include-default-style nil)
       (setq org-html-head
             (format "<style type=\"text/css\">\n pre.src { background-color: %s;}</style>\n" my-pre-bg)))))
 
-(add-hook org-export-before-processing-hook 'my-org-inline-css-hook)
+
 #+end_src
 
 
@@ -884,7 +884,7 @@ minor mode, you can add to it with this magic:
  ;;Enable eldoc in Clojure buffers:
  (require 'cider)
  (setq org-babel-clojure-backend 'cider)
- (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+ (add-hook 'cider-mode-hook #'eldoc-mode)
  
  ;;You can hide the *nrepl-connection* and *nrepl-server* buffers from
  ;;appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
@@ -895,6 +895,8 @@ minor mode, you can add to it with this magic:
 
  (setq cider-repl-tab-command 'indent-for-tab-command)
 
+ (setq nrepl-log-messages t)
+
  ;;Prevent the auto-display of the REPL buffer in a separate window after connection is established:
  (setq cider-repl-pop-to-buffer-on-connect nil)
 
@@ -903,6 +905,8 @@ minor mode, you can add to it with this magic:
 
  ;;Enable error buffer popping also in the REPL:
  ;(setq cider-repl-popup-stacktraces t)
+
+ (setq cider-stacktrace-fill-column 80)
 
  ;;To auto-select the error buffer when it's displayed:
  (setq cider-auto-select-error-buffer nil)
@@ -982,6 +986,14 @@ may want to put  auto-complete into your completion-at-point-functions:
 (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
 
 #+END_SRC
+
+Integration with other modes
+
+#+begin_src emacs-lisp
+(add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+(add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
+#+end_src
+
 
 #+begin_src emacs-lisp :tangle yes
 (defun cider-eval-last-sexp-and-append ()
@@ -1584,6 +1596,10 @@ Set to <your Dropbox root directory>/MobileOrg.
 To get this going, we just need to: =M-x org-mobile-push=
 ******* LaTeX
 ******* Publishing
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'org-export-before-processing-hook 'my-org-inline-css-hook-2)
+#+end_src
+
 ******* Babel
 The trick to literate programming is in the [[http://orgmode.org/worg/org-contrib/babel/intro.html][Babel project]], which
 allows org-mode to not only interpret source code blocks, but

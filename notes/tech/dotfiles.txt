@@ -1,0 +1,51 @@
+1. .Xdefaults
+2. .Xresources
+3. .xinitrc
+4. .xsession
+5. .bash_logout
+6. .bash_profile
+7. .bashrc
+8. .bash_aliases
+9. .gitignore
+10. .gitmodules
+11. .inputrc
+12. .tmux.conf
+13. .emacs.d / init.el
+14. .lein
+15. 
+
+
+
+
+* Install Scripts
+
+#+begin_src sh
+
+#!/bin/bash
+
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# vim
+ln -s ${BASEDIR}/vimrc ~/.vimrc
+ln -s ${BASEDIR}/vim/ ~/.vim
+
+# zsh
+ln -s ${BASEDIR}/zshrc ~/.zshrc
+
+# git
+ln -s ${BASEDIR}/gitconfig ~/.gitconfig
+#+end_src
+
+[[https://github.com/mathiasbynens/dotfiles/blob/3b4eb3efb692aa4d19a1e2c30c2ed9a65e9c7d8c/bootstrap.sh][mathiasbynens dotfiles sync script called bootstrap.sh using rsync]]
+
+
+[[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotbot blog to sync dotfiles by anish athalye]]
+
+[[https://github.com/michaeljsmalley/dotfiles/blob/master/makesymlinks.sh][Make Sym Links Sh]]
+
+[[http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/][using git and github to manage dotfiles]]
+
+[[https://github.com/cowboy/dotfiles][Cowboy dotfiles]]
+
+[[https://lrvick.net/blog/syncing_dotfiles_with_git/][syncing dotfiles with git]]
+* 
