@@ -6,13 +6,24 @@
 6. .bash_profile
 7. .bashrc
 8. .bash_aliases
-9. .gitignore
-10. .gitmodules
-11. .inputrc
-12. .tmux.conf
-13. .emacs.d / init.el
-14. .lein
-15. 
+9. .bash_prompt
+10. .gitignore
+11. .gitmodules
+12. .inputrc
+13. .tmux.conf
+14. .emacs.d / init.el
+15. .lein
+16. .brew
+17. bootstrap.sh / install.sh
+18. .functions
+19. .osx
+20. .exports
+21. .path
+22. .dircolors
+23. .curlrc
+24. .hushlogin
+25. 
+
 
 
 
@@ -38,7 +49,6 @@ ln -s ${BASEDIR}/gitconfig ~/.gitconfig
 
 [[https://github.com/mathiasbynens/dotfiles/blob/3b4eb3efb692aa4d19a1e2c30c2ed9a65e9c7d8c/bootstrap.sh][mathiasbynens dotfiles sync script called bootstrap.sh using rsync]]
 
-
 [[http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/][Dotbot blog to sync dotfiles by anish athalye]]
 
 [[https://github.com/michaeljsmalley/dotfiles/blob/master/makesymlinks.sh][Make Sym Links Sh]]
@@ -48,4 +58,86 @@ ln -s ${BASEDIR}/gitconfig ~/.gitconfig
 [[https://github.com/cowboy/dotfiles][Cowboy dotfiles]]
 
 [[https://lrvick.net/blog/syncing_dotfiles_with_git/][syncing dotfiles with git]]
-* 
+
+[[https://github.com/gf3/dotfiles/tree/v1.0.0][gf3 dotfiles bootstrapper script]]
+
+[[https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes][Git Basics working with remotes]]
+
+[[http://code.tutsplus.com/tutorials/setting-up-a-mac-dev-machine-from-zero-to-hero-with-dotfiles--net-35449][setting-up-a-mac-dev-machine-from-zero-to-hero-with-dotfiles]]
+
+[[https://github.com/paulirish/dotfiles][Paulirish dotfile - symlink-setup.sh]]
+
+[[https://github.com/mathiasbynens/dotfiles/blob/3b4eb3efb692aa4d19a1e2c30c2ed9a65e9c7d8c/bootstrap.sh][mathiasbynens dotfiles for .file examples]]
+
+
+
+
+* Notes
+
+*** Setting up github
+*** syncing dotfiles with git
+Initial Repository Creation
+Make the home folder on your primary system a Git repo
+
+cd
+git init
+Ignore everything by default
+
+echo "*" >> ~/.gitignore
+git add .gitignore
+Force add/commit specific files you want to track
+
+git add -f .bashrc
+git add -f .bash_profile
+git add -f .tmux.conf
+git add -f .Xresources
+git add -f .config/locale.conf
+git add -f .config/awesome
+git add -f .weechat/{.,python,perl}/*.{conf,rc}
+git add -f .ssh/{config,environment,id_rsa.pub}
+git commit -m 'initial commit from desktop'
+Add and push to an online Git repo
+
+git remote add git@github.com:lrvick/dotfiles.git
+git push origin master
+New system setup
+Initialize repo
+
+cd
+git init
+git remote add git@github.com:lrvick/dotfiles.git
+Sync/overwrite local dotfiles from repo
+
+git fetch --all
+git reset --hard origin/master
+git submodule update --init --recursive
+Send new changes to server
+Force add/commit changes/new file.
+
+git add -f .somefile
+git commit -m 'updated somefile'
+Push changes
+
+git push
+Automatically sync new dotfiles
+Add command to attempt to sync dotfiles on login
+echo "git pull && git submodule foreach --recursive git pull origin
+master" >> ~/.bash_profile
+
+*** .bash_profile/.bashrc
+
+When you open a new Terminal session, this file is loaded by Bash. 
+It loads in the other dotfiles
+path,bash_prompt,exports,aliases,functions,extra and configures some
+useful settings 
+such as auto correcting typos when using cd completion.
+In some instances .bashrc can be loaded, so this file makes sure that
+.bash_profile is called.
+
+*** # github.com/rupa/z   
+git clone https://github.com/rupa/z.git ~/code/z
+chmod +x ~/code/z/z.sh
+# consider reusing your current .z file if possible. it's painful to rebuild :)
+# z is hooked up in .bash_profile
+
+*** 
