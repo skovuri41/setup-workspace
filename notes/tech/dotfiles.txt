@@ -9,20 +9,20 @@
 9. .bash_prompt
 10. .gitignore
 11. .gitmodules
-12. .inputrc
-13. .tmux.conf
-14. .emacs.d / init.el
-15. .lein
-16. .brew
-17. bootstrap.sh / install.sh
-18. .functions
-19. .osx
-20. .exports
-21. .path
-22. .dircolors
-23. .curlrc
-24. .hushlogin
-25. 
+12. .gitignore_global
+13. .inputrc
+14. .tmux.conf
+15. .emacs.d / init.el
+16. .lein
+17. .brew
+18. bootstrap.sh / install.sh
+19. .functions
+20. .osx
+21. .exports
+22. .path
+23. .dircolors
+24. .curlrc
+25. .hushlogin
 
 
 
