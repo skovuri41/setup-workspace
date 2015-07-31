@@ -25,6 +25,20 @@
 25. .hushlogin
 
 
+* folders
+
+*** shell
+
+*** tmux
+
+*** git
+
+*** xenv
+
+*** emacs
+
+*** 
+
 
 
 
@@ -68,6 +82,10 @@ ln -s ${BASEDIR}/gitconfig ~/.gitconfig
 [[https://github.com/paulirish/dotfiles][Paulirish dotfile - symlink-setup.sh]]
 
 [[https://github.com/mathiasbynens/dotfiles/blob/3b4eb3efb692aa4d19a1e2c30c2ed9a65e9c7d8c/bootstrap.sh][mathiasbynens dotfiles for .file examples]]
+
+[[https://jasahackintosh.wordpress.com/2014/09/04/tweak-os-x-from-command-terminal/][Tweak OS X from command terminal]]
+
+[[https://wixelhq.com/blog/arthur-making-your-mac-more-awesome][Make your mac more awesome]]
 
 
 
