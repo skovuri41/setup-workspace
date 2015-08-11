@@ -1,0 +1,17 @@
+
+
+
+* Links
+
+[[https://phuonguzi.wordpress.com/2015/05/05/diy-multi-purpose-htpc-with-raspberry-pi-and-osmc-part-3-installation/][Osmc Installation by phuonguzi]]
+
+[[https://osmc.tv/][osmc.tv]]
+
+[[https://www.raspberrypi.org/learning/robo-butler/bluetooth-setup/][raspberry pi bluetooth adapter]]
+
+[[https://www.raspberrypi.org/learning/robo-butler/bluetooth-setup/][python script to manage playlists via json api]]
+
+
+[[https://github.com/jcsaaddupuy/python-xbmc][python xbmc]]
+
+
