@@ -98,6 +98,201 @@ There are seven different primary abstractions in which Clojure’s data structu
 * Links
 [[http://spin.atomicobject.com/2015/05/11/clojure-logging/][Clojure Logging - logback]]
 [[http://rundis.github.io/blog/2015/clojure_dates.html][Clojure Protocol Extending Oracle Date ad Times]]
+[[http://blog.scalac.io/2015/04/02/clojurescript-reactjs-reagent.html][ClojureScript Reagent ReactJS]]
+
+* libraries
+*** environ
+*** timbre, logback
+*** duct
+*** ring, compojure, hiccup
+*** liberator
+*** compojure-api
+*** swagger
+*** system
+*** component
+*** reloaded
+*** yesql
+*** clojure-jdbc
+*** jetty
+*** postgres, oracle
+*** clojurescript
+*** figwheel
+*** metricsgraphics.js
+
+* reference frameworks
+*** mx-radio
+*** pepa
+*** luminus
+
+* Notes
+
+# lein new [$TEMPLATE_NAME] $PROJECT_NAME
+# lein help $TASK
+
+*** lib-noir: 
+This contains a slough of useful utilities to create web applications
+using the Ring framework, such as routing, redirections, static
+resources, password hashing, file uploads, sessions and cookies, and
+so on. It's the work horse for much of the plumbing common to all web
+applications. Visit the following website:
+https://github.com/noir-clojure/lib-noir.
+*** ring-server: 
+This is a bit of an omnibus library, encompassing several other
+Ring-related libraries. Ring is a web application library, which acts
+as an abstraction between our web application (hipstr) and the
+underlying web server or servlet container.  You can think of it as
+something akin to Java's Servlet API (which Ring fulfills), Python's
+WSGI, or Ruby's Rack. Ring Server, by contrast, is a library that
+starts a web server capable of serving a Ring handler.  We'll get into
+more detail in Chapter 2, Ring and the Ring Server. To get more
+information about Ring Server, visit:
+https://github.com/weavejester/ring-server
+*** selmer: 
+This is an HTML template rendering a library modeled after the
+ubiquitous Django framework. Selmer allows us to generate dynamic
+pages, script loops and conditional rendering, extend other Selmer
+templates, and so on. We'll talk more about Selmer in Chapter 4, URL
+Routing and Template Rendering. To get more information on selmer,
+visit: https://github.com/yogthos/Selmer
+*** timbre: 
+Timbre is a pure Clojure logging library. It's pretty much like every
+other logging library on the planet, complete with somewhat confusing
+configuration. We'll cover Logging in Chapter 3, Logging. You can also
+visit https://github.com/ptaoussanis/timbre, to get more information
+on Timbre.
+*** tower: 
+This is similar to its sibling timbre, and is a pure Clojure library
+that provides support for internationalization and localization. You
+can refer to https://github.com/ptaoussanis/tower.
+*** markdown-clj: 
+This is a simple library that allows us to compile markdown to
+html. For more information, you can visit
+https://github.com/yogthos/markdown-clj.
+*** environ: 
+This allows us to create different application configurations for
+different environments (think development versus production). We'll
+work with environ in Chapter 11, Environment Configuration and
+Deployment.
+*** cronj: 
+This is a simple, straightforward library for creating cron-like
+scheduled tasks. To know more about cronj, visit
+https://github.com/zcaudate/cronj.
+*** noir-exception: 
+This provides prettified, rendered, exception stacks in the browser as
+well as to log files.  The noir-exception library highlights your
+application's namespaces in their own color, easily separating your
+called code from the rest of the first and third party Clojure libs.
+*** prone: 
+This produces the most amazing exception reporting output you might
+have ever seen. (https://github.com/magnars/prone).
+
+*** Tree like command
+# find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+
+***  Running the Compiler
+The easiest way to develop ClojureScript applications is to run the
+compiler in auto mode. This way any changes you make in your
+namespaces will be recompiled automatically and become immediately
+available on the page. To start the compiler in this mode simply run:
+
+lein cljsbuild auto Make sure to run the clean option before packaging
+the application for production using lein uberjar. This will ensure
+that any existing artifacts are removed before the production
+JavaScript is compiled:
+
+lein cljsbuild once Live Code Reloading A more advanced approach is to
+setup Figwheel to hot load the code in the browser. The easiest way to
+get Figwheel support is by using +cljs profile when creating your
+Luminus project.
+
+Figwheel requires that the server to be running:
+
+lein run Once the server starts simply run:
+
+lein figwheel This will start Figwheel and connect a browser REPL. Any
+changes you make in ClojureScript source will now be automatically
+reloaded on the page.
+
+*** Advanced Compilation and Exports
+During advanced compilation variable names will be munged by the
+compiler to shorten the code. If we wish to expose any functions to
+JavaScript we have to ensure that their names are protected. This is
+done by using the ^:export annotation, eg:
+
+(ns main)
+
+(defn ^:export init [] (js/alert "hello world")) We can now call this
+  function from our page like any other:
+
+<script> main.init(); </script> If we use a Js library in our code we
+must protect the names of any functions we call from it as well. For
+example, if we wanted to use the AlbumColors library, we could write
+the following:
+
+(defn ^:export init [] (.getColors (js/AlbumColors. "/img/foo.jpg")
+  (fn [[background]] (.log js/console background)))) However, when the
+  script is compiled with the :advanced flag, the AlbumColors and
+  getColors will be munged.
+
+To protect them we have to create a Js file with the names we'd like
+to protect and reference it in our build:
+
+var AlbumColors = {}; AlbumColors.getColors = function() {}; If we put
+the above code in a file called externs.js under the resources
+directory then we would reference it in our cljsbuild section as
+follows:
+
+{:id "release"
+ :source-paths ["src-cljs"]
+ :compiler
+ {:output-to "resources/public/js/app.js"
+  :optimizations :advanced
+  :pretty-print false
+  :output-wrapper false
+  ;;specify the externs file to protect function names
+  :externs ["resources/externs.js"]
+  :closure-warnings {:non-standard-jsdoc :off}}}
+A useful site for extracting externs can be found here.
+
+Interacting with JavaScript All the global JavaScript functions and
+variables are available via the js namespace.
+
+Method Calls (.method object params)
+
+(.log js/console "hello world!")  Accessing Properties (.-property
+object)
+
+(.-style div) Setting Properties (set! (.-property object))
+
+(set! (.-color (.-style div) "#234567")) For more examples of
+ClojureScript synonyms of common JavaScript operations see the
+ClojureScript Synonyms.
+
+*** http://kanaka.github.io/clojurescript/web/synonym.html
+
+*** Validation
+Bouncer is a Clojure/Script library and allows us to share validation logic between the client and the server.
+
+Bouncer provides bouncer.core/validate and bouncer.core/valid? functions for handling validation. These functions each accept a map containing the parameters followed by the validators.
+
+Bouncer provides the following validators out of the box:
+
+required args: [v] - validates that the value is present
+number args: [v] - validates that the value is numeric
+positive args: [v] - validates that the value is a positive number
+member args: [v coll] - validates whether the value is a member of a collection
+custom args: [v pred] - validates the value using a custom validator
+every args: [coll pred] - checks that every member of the collection matches the predicate
+matches args: [v regex] - checks that the value matches the suppied regex
+email args: [v] - checks that the value is an email address
+datetime args: [v & [format]] - checks that the value is a date(time) with optional format string
+max-count args: [coll n] - validates that the collection has at most n elements
+min-count args: [coll n] - validates that the collection has at least
+n elements
+
+
+
+
 
 
  

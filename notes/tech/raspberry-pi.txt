@@ -15,3 +15,5 @@
 [[https://github.com/jcsaaddupuy/python-xbmc][python xbmc]]
 
 
+[[http://www.itpro.co.uk/mobile/21862/raspberry-pi-top-15-projects-to-try-yourself][Raspberry pi making a digital frame]]
+
