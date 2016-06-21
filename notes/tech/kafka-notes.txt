@@ -1,0 +1,71 @@
+* Kafka Reliability Guarantees
+Acks=all
+Block.on.buffer.full=true
+Retries=MAX_INT, max.inflight.requests.per.connect=1
+Producer.close()
+Replication-factor >=3
+Min.insync.replicas=2
+Unclean.leader.election=false
+Auto.offset.commit=false
+Commit after processing
+Monitor
+* min.insync.replicas
+When a producer sets acks to "all", min.insync.replicas specifies the minimum number of replicas that must acknowledge a write for the write to be considered successful.
+If this minimum cannot be met, then the producer will raise an exception (either NotEnoughReplicas or NotEnoughReplicasAfterAppend).
+When used together, min.insync.replicas and acks allow you to enforce greater durability guarantees.
+A typical scenario would be to create a topic with a replication factor of 3, set min.insync.replicas to 2, and produce with acks of "all".
+This will ensure that the producer raises an exception if a majority of replicas do not receive a write.
+* block.on.buffer.full
+When our memory buffer is exhausted we must either stop accepting new records (block) or throw errors.
+By default this setting is false and the producer will no longer throw a BufferExhaustException but instead will use the max.block.msvalue to block, after which it will throw a TimeoutException.
+Setting this property to true will set the max.block.ms to Long.MAX_VALUE. Also if this property is set to true, parametermetadata.fetch.timeout.ms is not longer honored.
+This parameter is deprecated and will be removed in a future release. Parametermax.block.ms should be used instead.
+The producer config block.on.buffer.full has been deprecated and will be removed in future release.
+Currently its default value has been changed to false.
+The KafkaProducer will no longer throw BufferExhaustedException but instead will use max.block.ms value to block, after which it will throw a TimeoutException.
+If block.on.buffer.full property is set to true explicitly, it will set the max.block.ms to Long.MAX_VALUE and metadata.fetch.timeout.ms will not be honoured
+* unclean.leader.election.enable
+Indicates whether to enable replicas not in the ISR set to be elected as leader as a last resort, even though doing so may result in data loss
+* replication.factor
+The replication factor for change log topics and repartition topics created by the stream processing application.
+* max.in.flight.requests.per.connection
+The maximum number of unacknowledged requests the client will send on a single connection before blocking.
+Note that if this setting is set to be greater than 1 and there are failed sends, there is a risk of message re-ordering due to retries (i.e., if retries are enabled).
+* auto.commit.enable
+If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
+* Notes
+By default, Kafka doesn't allow you to delete topics.
+delete.topic.enable = true
+* Consumers Configuration
+- fetch.min.bytes
+- fetch.max.wait.mx
+- max.partition.fetch.bytes
+- session.timeout.ms
+- auto.offset.reset
+- enable.auto.commit
+- partition.assignment.strategy
+- client.id
+* Producers Configuration
+- linger.ms
+- client.id
+- max.in.flight.requests.per.connection
+- timeout.ms and metadata.fetch.timeout.ms
+- acks
+- buffer.memory
+- compression.type
+- batch.size
+*  Broker Configuration
+- broker.id
+- port
+- zookeeper.connect
+- log.dirs
+- num.recovery.threads.per.data.dir
+- auto.create.topics.enable
+* Topic Defaults
+- num.partitions
+- log.retention.ms
+- log.retention.bytes
+- log.segment.bytes
+- log.segment.ms
+- message.max.bytes
+-
