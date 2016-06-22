@@ -61,7 +61,230 @@ delete.topic.enable = true
 - log.dirs
 - num.recovery.threads.per.data.dir
 - auto.create.topics.enable
-* Topic Defaults
+
+broker.id: This should be a non-negative integer ID. The name of the
+broker should be unique in a cluster, as it is for all intents and
+purposes.
+This also allows the broker to be moved to a different host and/or
+port without additional changes on the consumer's side.
+Its default value is 0.
+
+host.name: Its default value is null. If it is not specified, Kafka
+will bind to all the interfaces on the system.
+If specified, it will bind only to that particular address. If you want the clients to connect only to a particular interface, it is a good idea to specify the host name.
+
+port: This defines the port number that the Kafka broker will be listening to in order to accept client connections.
+
+log.dirs: This tells the broker the directory where it should store
+the files for the persistence of messages.
+You can specify multiple directories here by comma-separating the locations. The default value for this is /tmp/kafka-logs.
+
+message.max.bytes: This sets the maximum size of the message that the
+server can receive.
+This should be set to prevent any producer from inadvertently sending extra large messages and swamping the consumers. The default size is 1000000.
+
+num.network.threads: This sets the number of threads running to handle
+the network's request.
+If you are going to have too many requests coming in, then you need to change this value. Else, you are good to go. Its default value is 3.
+
+num.io.threads: This sets the number of threads spawned for IO
+operations.
+This is should be set to the number of disks present at the least. Its default value is 8.
+
+background.threads: This sets the number of threads that will be
+running and doing various background jobs.
+These include deleting old log files. Its default value is 10 and you might not need to change it.
+
+queued.max.requests: This sets the queue size that holds the pending
+messages while others are being processed by the IO threads.
+If the queue is full, the network threads will stop accepting any more
+messages.
+If you have erratic loads in your application, you need to set queued.max.requests to a value at which it will not throttle.
+
+socket.send.buffer.bytes: This sets the SO_SNDBUFF buffer size, which is used for socket connections.
+
+socket.receive.buffer.bytes: This sets the SO_RCVBUFF buffer size, which is used for socket connections.
+
+socket.request.max.bytes: This sets the maximum size of the request
+that the server can receive.
+This should be smaller than the Java heap size you have set.
+
+num.partitions: This sets the number of default partitions of a topic you create without explicitly giving any partition size.
+
+log.segment.bytes: This defines the maximum segment size in bytes.
+Once a segment reaches that size, a new segment file is created.
+A topic is stored as a bunch of segment files in a directory. This can also be set on a per-topic basis. Its default value is 1 GB.
+
+log.roll.{ms,hours}: This sets the time period after which a new
+segment file is created, even if it has not reached the size limit.
+These settings can also be set on a per-topic basis. Its default value is 7 days.
+
+log.cleanup.policy: Its value can be either delete or compact. If the
+delete option is set,
+the log segments will be deleted periodically when it reaches its time
+threshold or size limit.
+If the compact option is set, log compaction will be used to clean up obsolete records. This setting can be set on a per-topic basis.
+
+log.retention.{ms,minutes,hours}: This sets the amount of time the
+logs segments will be retained.
+This can be set on a per-topic basis and its default value is 7 days.
+
+log.retention.bytes: This sets the maximum number of log bytes per
+partition that is retained before it is deleted.
+This value can be set on a per-topic basis. When either the log time or size limit is reached, the segments are deleted.
+
+log.retention.check.interval.ms: This sets the time interval at which
+the logs are checked for deletion to meet retention policies.
+Its default value is 5 minutes.
+
+log.cleaner.enable: For log compaction to be enabled, it has to be set true.
+
+log.cleaner.threads: This sets the number of threads that need to be working to clean logs for compaction.
+
+log.cleaner.backoff.ms: This defines the interval at which the logs will check whether any log needs cleaning.
+
+log.index.size.max.bytes: These settings set the maximum size allowed
+for the offset index of each log segment.
+It can be set on a per-topic basis as well.
+
+log.index.interval.bytes: This defines the byte interval at which a
+new entry is added to the offset index.
+For each fetch request, the broker does a linear scan for up to those
+many bytes to find the correct position in the log to begin and end
+the fetch.
+Setting this value to be high will mean larger index files (and a bit more memory usage), but less scanning.
+
+log.flush.interval.messages: This is the number of messages that are
+kept in memory till they are flushed to the disk.
+Though it does not guarantee durability, it still gives finer control.
+
+log.flush.interval.ms: This sets the time interval at which the messages are flushed to the disk.
+
+default.replication.factor: This sets the default replication factor for the automatically created topics.
+
+replica.lag.time.max.ms: This is the time period within which, if the
+leader does not receive any fetch requests,
+it is moved out of in-sync replicas and is treated as dead.
+
+replica.lag.max.messages: This is the maximum number of messages a follower can be behind the leader before it is considered to be dead and not in-sync.
+
+replica.fetch.max.bytes: This sets the maximum number of the bytes of data a follower will fetch in a request from its leader.
+
+replica.fetch.wait.max.ms: This sets the maximum amount of time for the leader to respond to a replica's fetch request.
+
+num.replica.fetchers: This specifies the number of threads used to
+replicate the messages from the leader.
+Increasing the number of threads increases the IO rate to a degree.
+
+replica.high.watermark.checkpoint.interval.ms: This specifies the frequency at which each replica saves its high watermark in the disk for recovery.
+
+fetch.purgatory.purge.interval.requests: This sets the interval at
+which the fetch request purgatory's purge is invoked.
+This purgatory is the place where the fetch requests are kept on hold till they can be serviced.
+
+producer.purgatory.purge.interval.requests: This sets the interval at
+which producer request purgatory's purge is invoked.
+This purgatory is the place where the producer requests are kept on hold till they are serviced.
+
+auto.create.topics.enable: Setting this value to true will make sure
+that, if you fetch metadata or produce messages for a nonexistent
+topic,
+controlled.shutdown.enable: This setting, if set to true, makes sure
+that when a shutdown is called on the broker,
+and if it's the leader of any topic, then it will gracefully move all
+leaders to a different broker before it shuts down.
+This increases the availability of the system, overall.
+
+controlled.shutdown.max.retries: This sets the maximum number of retries that the broker makes to do a controlled shutdown before doing an unclean one.
+
+controlled.shutdown.retry.backoff.ms: This sets the backoff time between the controlled shutdown retries.
+
+auto.leader.rebalance.enable: If this is set to true, the broker will
+automatically try to balance the leadership of partitions among the
+brokers by periodically setting the leadership to the preferred replica of each partition if available.
+
+leader.imbalance.per.broker.percentage: These settings set the
+percentage of the leader imbalance allowed per broker.
+The cluster will rebalance the leadership if this ratio goes above the set value.
+
+leader.imbalance.check.interval.seconds: This defines the time period to check the leader imbalance.
+
+offset.metadata.max.bytes: This defines the maximum amount of metadata allowed to the client to be stored with their offset.
+
+max.connections.per.ip: This sets the maximum number of connections that the broker accepts from a given IP address.
+
+connections.max.idle.ms: This sets the maximum time the broker waits idle before it closes the socket connection.
+
+unclean.leader.election.enable: This setting, if set to true, allows
+the replicas that are not in-sync replicas (ISR) to become the leader.
+This can lead to data loss. This is the last option for the cluster though.
+
+offsets.topic.num.partitions: This sets the number of partitions for
+the offset commit topic. This cannot be changed post deployment,
+so it is suggested that the number be set to a higher limit. Its default value is 50.
+
+offsets.topic.retention.minutes: This sets the time till which offsets
+will be kept. Post this time, the offsets will be marked for deletion.
+The actual deletion of offsets will happen only later when the log cleaner is run for the compaction of offset topic.
+
+offsets.retention.check.interval.ms: This sets the time interval to check for stale offsets.
+
+offsets.topic.replication.factor: This sets the replication factor for
+the offset commit topic. Higher the value, higher will be the
+availability.
+If, at the time of creating the offset topic, the number of brokers is
+lower than the replication factor,
+the number of replicas created will be equal to the brokers.
+
+offsets.topic.segment.bytes: This sets the segment size for topic of
+offsets.
+This, if kept low, leads to faster log compaction and loads.
+
+offsets.load.buffer.size: This sets the buffer size to be used for reading offset segments into the offset manager's cache.
+
+offsets.commit.required.acks: This sets the number of acknowledgements required before the offset commit can be accepted.
+
+offsets.commit.timeout.ms: These settings set the time after which the
+offset commit will be performed in case the required number of
+replicas has not received the offset commit.
+
+controlled.shutdown.enable=true
+If the setting for controlled shutdown is enabled, it ensures that
+server shutdown happens properly.
+To do this, first it writes all the logs to disk so that there are no
+issues with logs when you restart the broker.
+As the next step it makes sure that another node becomes the leader
+for a partition that was the leader earlier.
+This makes sure that the downtime for each partition is reduced considerably.
+
+** zookeeper configuration
+- zookeeper.connect: This is where you specify the ZooKeeper connection
+string in the form of hostname:port.
+You can use comma-separated values to specify multiple ZooKeeper
+nodes. This ensures reliability and continuity of the Kafka cluster
+even in the event of a ZooKeeper node being down.
+ZooKeeper allows you to use the chroot path to make a particular Kafka
+data available only under the particular path.
+This enables you to have the same ZooKeeper cluster support for
+multiple Kafka clusters.
+Following is the method to specify connection strings in this case:
+host1:port1,host2:port2,host3:port3/chroot/path
+The preceding statement puts all the cluster data in path
+/chroot/path.
+This path must be created prior to starting off the Kafka cluster and consumers must use the same string.
+
+- zookeeper.session.timeout.ms: This specifies the time within which, if
+the heartbeat from the server is not received, it is considered dead.
+The value for this must be carefully selected as, if this heartbeat
+has too long an interval,
+it will not be able to detect a dead server in time and also lead to issues. Also, if the time period is too small, a live server might be considered dead.
+
+
+- zookeeper.connection.timeout.ms: This specifies the maximum connection time that a client waits to accept a connection.
+
+- zookeeper.sync.time.ms: This specifies the time a ZooKeeper follower can be behind its leader.
+
+** Topic Defaults
 - num.partitions
 - log.retention.ms
 - log.retention.bytes
@@ -69,3 +292,10 @@ delete.topic.enable = true
 - log.segment.ms
 - message.max.bytes
 -
+* Monitoring
+
+You need to have the Kafka server up-and-running with the JMX port. To set the JMX port, you need to run Kafka using the following command.
+$ JMX_PORT=10101 ./bin/kafka-server-start.sh config/server.properties
+
+From the Kafka folder, run the following command:
+$ bin/kafka-run-class.sh kafka.tools.JmxTool --jmx-url service:jmx:rmi:///jndi/rmi://127.0.0.1:9999/jmxrmi
