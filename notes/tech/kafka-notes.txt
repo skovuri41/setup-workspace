@@ -1,3 +1,7 @@
+* Installation
+[[https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-14-04][How to Install Apache Kafka -Digital Ocean]]
+
+
 * Kafka Reliability Guarantees
 Acks=all
 Block.on.buffer.full=true
@@ -34,8 +38,33 @@ Note that if this setting is set to be greater than 1 and there are failed sends
 ** auto.commit.enable
 If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
 * Notes
+** topic delete
 By default, Kafka doesn't allow you to delete topics.
 delete.topic.enable = true
+** gc settings
+G1 Collector:
+-Xmx6g -Xms6g -XX:MetaspaceSize=96m -XX:+UseG1GC
+-XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M
+-XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80
+
+** topic level configuration
+Topic-level configuration Configurations pertinent to topics have both
+a global default as well an optional per-topic override.
+If no per-topic configuration is given the global default is used. The
+override can be set at topic creation time by giving one or more
+--config options.
+This example creates a topic named my-topic with a custom max message size and flush rate:
+ > bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic my-topic --partitions 1
+        --replication-factor 1 --config max.message.bytes=64000 --config flush.messages=1
+Overrides can also be changed or set later using the alter topic
+command.
+This example updates the max message size for my-topic:
+ > bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic
+    --config max.message.bytes=128000
+To remove an override you can do
+ > bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic
+    --delete-config max.message.bytes
+
 * Consumers Configuration
 - fetch.min.bytes
 - fetch.max.wait.mx
@@ -293,9 +322,73 @@ it will not be able to detect a dead server in time and also lead to issues. Als
 - message.max.bytes
 -
 * Monitoring
-
+** JMX
 You need to have the Kafka server up-and-running with the JMX port. To set the JMX port, you need to run Kafka using the following command.
 $ JMX_PORT=10101 ./bin/kafka-server-start.sh config/server.properties
 
 From the Kafka folder, run the following command:
 $ bin/kafka-run-class.sh kafka.tools.JmxTool --jmx-url service:jmx:rmi:///jndi/rmi://127.0.0.1:9999/jmxrmi
+** kafka manager
+https://github.com/yahoo/kafka-manager
+** kafka monitor
+https://github.com/linkedin/kafka-monitor
+
+* Server properties
+#+BEGIN_EXAMPLE
+broker.id=0
+port=
+
+# Socket server configuration
+num.io.threads=8
+num.network.threads=8
+socket.request.max.bytes=104857600
+socket.receive.buffer.bytes=1048576
+socket.send.buffer.bytes=1048576
+queued.max.requests=16
+fetch.purgatory.purge.interval.requests=100
+producer.purgatory.purge.interval.requests=100
+
+
+# Log configuration
+log.index.interval.bytes=4096
+log.index.size.max.bytes=10485760
+log.retention.hours=168
+log.flush.interval.ms=10000
+log.flush.interval.messages=10000
+log.flush.scheduler.interval.ms=2000
+log.roll.hours=168
+log.retention.check.interval.ms=300000
+log.segment.bytes=1073741824
+log.dirs=/tmp/kafka-logs
+#log.retention.bytes=1073741824
+log.segment.bytes=1073741824
+log.retention.check.interval.ms=300000
+num.recovery.threads.per.data.dir=1
+num.partitions=1
+auto.create.topics.enable=true
+delete.topic.enable = true
+message.max.bytes=1000000
+unclean.leader.election.enable=false
+min.insync.replicas=2
+request.timeout.ms=60000
+
+
+# Replication configurations
+num.replica.fetchers=4
+replica.fetch.max.bytes=1048576
+replica.fetch.wait.max.ms=500
+replica.high.watermark.checkpoint.interval.ms=5000
+replica.socket.timeout.ms=30000
+replica.socket.receive.buffer.bytes=65536
+replica.lag.time.max.ms=10000
+
+controller.socket.timeout.ms=30000
+controller.message.queue.size=10
+
+############################# Zookeeper #############################
+zookeeper.connect=localhost:2181
+# Timeout in ms for connecting to zookeeper
+zookeeper.connection.timeout.ms=6000
+#zookeeper.session.timeout.ms
+
+#+END_EXAMPLE
